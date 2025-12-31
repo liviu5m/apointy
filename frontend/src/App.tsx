@@ -1,21 +1,38 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AuthRequiredRoute from "./components/middleware/AuthRequiredRoute";
+import Login from "./components/pages/Login";
+import Signup from "./components/pages/Signup";
 
 function App() {
-  useEffect(() => {
-    axios
-      .get(`http://localhost:8080/auth/user`)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
   return (
     <>
-      <h1>Hello</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/*"
+            element={
+              <AuthRequiredRoute>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                </Routes>
+              </AuthRequiredRoute>
+            }
+          />
+          <Route
+            path="/auth/*"
+            element={
+              <AuthRequiredRoute>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/sign-up" element={<Signup />} />
+                </Routes>
+              </AuthRequiredRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
