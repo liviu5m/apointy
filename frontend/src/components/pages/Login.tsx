@@ -1,8 +1,42 @@
+import { authenticateUser } from "@/api/user";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { Calendar } from "lucide-react";
-import React from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+
+  const { mutate: authenticate } = useMutation({
+    mutationKey: ["authenticate-user"],
+    mutationFn: () => authenticateUser(data),
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.data) {
+        if (typeof error.response?.data == "string") {
+          toast.error(error.response?.data as string);
+        } else {
+          Object.entries(error.response.data).forEach(([field, message]) => {
+            if (field == "userId")
+              navigate("/auth/verify/", {
+                state: { fromSignup: true, userId: message },
+              });
+          });
+        }
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  });
+
   return (
     <div className="w-screen h-screen bg-[#F8FAFC] flex flex-col items-center justify-center gap-10">
       <div className="flex items-center justify-center gap-4">
@@ -16,13 +50,21 @@ const Login = () => {
         <h3 className="text-gray-400 mt-2 text-center">
           Sign in to manage your appointments
         </h3>
-        <form className="mt-10 flex flex-col">
+        <form
+          className="mt-10 flex flex-col"
+          onSubmit={(e) => {
+            e.preventDefault();
+            authenticate();
+          }}
+        >
           <div>
             <h4 className="text-sm font-semibold mb-2">Email Address</h4>
             <input
               type="email"
               placeholder="you@example.com"
               className="px-5 py-3 rounded-lg border-gray-200 border w-[400px] outline-[#0891B2] text-sm"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
             />
           </div>
           <div className="mt-5 mb-3">
@@ -31,10 +73,19 @@ const Login = () => {
               type="password"
               placeholder="••••••••"
               className="px-5 py-3 rounded-lg border-gray-200 border w-[400px] outline-[#0891B2] text-sm"
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
             />
           </div>
           <div>
-            <h5 className="text-[#0891B2] font-semibold text-right text-sm cursor-pointer">
+            <h5
+              className="text-[#0891B2] font-semibold text-right text-sm cursor-pointer float-right"
+              onClick={() => {
+                navigate("/auth/password-reset", {
+                  state: { fromPasswordReset: true, page: "email" },
+                });
+              }}
+            >
               Forgot Password ?
             </h5>
           </div>

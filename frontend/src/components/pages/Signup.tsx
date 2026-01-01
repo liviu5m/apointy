@@ -1,9 +1,51 @@
+import { signupUser } from "@/api/user";
+import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { Calendar, Store, User } from "lucide-react";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Signup = () => {
-  const [role, setRole] = useState("");
+  const [data, setData] = useState({
+    role: "",
+    fullName: "",
+    email: "",
+    password: "",
+    passwordConfirmation: "",
+  });
+  const navigate = useNavigate();
+
+  const { mutate: signup, isPending } = useMutation({
+    mutationKey: ["signup-user"],
+    mutationFn: () => signupUser(data),
+    onSuccess: (data) => {
+      console.log(data);
+      navigate("/auth/verify/", {
+        state: { fromSignup: true, userId: data.id },
+      });
+    },
+    onError: (error: AxiosError) => {
+      if (error.response?.data) {
+        if (typeof error.response?.data == "string") {
+          toast.error(error.response?.data as string);
+        } else {
+          const errorMessages = Object.entries(error.response.data).map(
+            ([field, message]) => <p key={field}>{message}</p>
+          );
+
+          toast.error(
+            <div>
+              <strong>Validation errors:</strong>
+              {errorMessages}
+            </div>
+          );
+        }
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    },
+  });
 
   return (
     <div className="w-screen h-screen bg-[#F8FAFC] flex flex-col items-center justify-center gap-10">
@@ -18,7 +60,13 @@ const Signup = () => {
         <h3 className="text-gray-400 mt-2 text-center">
           Get started with Apointy today
         </h3>
-        <form className="mt-10 flex flex-col gap-5">
+        <form
+          className="mt-10 flex flex-col gap-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            signup();
+          }}
+        >
           <div className="space-y-3">
             <label className="text-sm font-medium text-slate-700">
               I am a...
@@ -26,9 +74,9 @@ const Signup = () => {
             <div className="grid grid-cols-2 gap-4 mt-2">
               <button
                 type="button"
-                onClick={() => setRole("customer")}
+                onClick={() => setData({ ...data, role: "customer" })}
                 className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-all ${
-                  role === "customer"
+                  data.role === "customer"
                     ? "border-cyan-600 bg-cyan-50 text-cyan-700"
                     : "border-slate-200 hover:border-slate-300 text-slate-600"
                 }`}
@@ -38,9 +86,9 @@ const Signup = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setRole("business_owner")}
+                onClick={() => setData({ ...data, role: "business_owner" })}
                 className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-all ${
-                  role === "business_owner"
+                  data.role === "business_owner"
                     ? "border-cyan-600 bg-cyan-50 text-cyan-700"
                     : "border-slate-200 hover:border-slate-300 text-slate-600"
                 }`}
@@ -56,6 +104,8 @@ const Signup = () => {
               type="text"
               placeholder="John Doe"
               className="px-5 py-3 rounded-lg border-gray-200 border w-[400px] outline-[#0891B2] text-sm"
+              value={data.fullName}
+              onChange={(e) => setData({ ...data, fullName: e.target.value })}
             />
           </div>
           <div>
@@ -64,6 +114,8 @@ const Signup = () => {
               type="email"
               placeholder="you@example.com"
               className="px-5 py-3 rounded-lg border-gray-200 border w-[400px] outline-[#0891B2] text-sm"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
             />
           </div>
           <div>
@@ -72,6 +124,8 @@ const Signup = () => {
               type="password"
               placeholder="••••••••"
               className="px-5 py-3 rounded-lg border-gray-200 border w-[400px] outline-[#0891B2] text-sm"
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
             />
           </div>
           <div>
@@ -82,10 +136,17 @@ const Signup = () => {
               type="password"
               placeholder="••••••••"
               className="px-5 py-3 rounded-lg border-gray-200 border w-[400px] outline-[#0891B2] text-sm"
+              value={data.passwordConfirmation}
+              onChange={(e) =>
+                setData({ ...data, passwordConfirmation: e.target.value })
+              }
             />
           </div>
-          <button className="px-5 py-3 rounded-lg bg-[#0891B2] text-white font-semibold mt-7 cursor-pointer hover:bg-[#067996]">
-            Sign in
+          <button className="px-5 py-3 rounded-lg bg-[#0891B2] text-white font-semibold mt-7 cursor-pointer hover:bg-[#067996] flex items-center justify-center gap-5">
+            <span>Sign in</span>
+            {isPending && (
+              <div className="w-5 h-5 border-4 border-t-[#08b216] border-gray-300 rounded-full animate-spin"></div>
+            )}
           </button>
         </form>
         <p className="text-center text-gray-600 text-sm mt-5">

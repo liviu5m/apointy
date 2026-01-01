@@ -1,5 +1,6 @@
 package com.apointy.auth_service.models;
 
+import com.apointy.auth_service.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -19,9 +21,9 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
     private String fullName;
@@ -32,7 +34,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private UserRole role;
+
     private boolean enabled = false;
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpiresAt;
+
+    private boolean passwordValidation = false;
+    private String passwordVerificationCode;
+    private LocalDateTime passwordVerificationCodeExpiresAt;
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
@@ -75,9 +86,26 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String fullName, String email, String password) {
+    public User(String fullName, String email, String password, UserRole role) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", enabled=" + enabled +
+                ", verificationCode='" + verificationCode + '\'' +
+                ", verificationCodeExpiresAt=" + verificationCodeExpiresAt +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
