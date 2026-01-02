@@ -45,6 +45,8 @@ public class User implements UserDetails {
     private String passwordVerificationCode;
     private LocalDateTime passwordVerificationCodeExpiresAt;
 
+    private String provider = "credentials";
+
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;

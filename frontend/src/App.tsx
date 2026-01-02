@@ -9,6 +9,7 @@ import Verify from "./components/pages/Verify";
 import { AppProvider } from "./lib/AppProvider";
 import Home from "./components/pages/Home";
 import PasswordReset from "./components/pages/PasswordReset";
+import SocialCallback from "./components/pages/SocialCallback";
 
 function App() {
   const queryClient = new QueryClient();
@@ -34,6 +35,10 @@ function App() {
                     <Route path="/sign-up" element={<Signup />} />
                     <Route path="/verify" element={<Verify />} />
                     <Route path="/password-reset" element={<PasswordReset />} />
+                    <Route
+                      path="/social-callback"
+                      element={<SocialCallback />}
+                    />
                   </Routes>
                 </AuthRequiredRoute>
               }

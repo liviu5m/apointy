@@ -106,6 +106,22 @@ public class AuthenticationService {
         userRepository.save(user);
     }
 
+    public User processOAuthPostLogin(String email, String name, String role) {
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user != null) return user;
+        if(user != null && user.getProvider().equals("credentials")) throw new RuntimeException("You can log in only using credentials to this account");
+        user = new User(name, email, passwordEncoder.encode("google"),  UserRole.valueOf(role.toUpperCase()));
+        user.setEnabled(true);
+        userRepository.save(user);
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        "google"
+                )
+        );
+        return user;
+    }
+
     public String generateVerificationCode() {
         String code = String.valueOf(random.nextInt(900000) + 100000);
         return code;

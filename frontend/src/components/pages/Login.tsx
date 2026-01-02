@@ -37,6 +37,11 @@ const Login = () => {
     },
   });
 
+  const handleGoogleLogin = () => {
+    window.location.href =
+      import.meta.env.VITE_API_URL + "/oauth2/authorization/google";
+  };
+
   return (
     <div className="w-screen h-screen bg-[#F8FAFC] flex flex-col items-center justify-center gap-10">
       <div className="flex items-center justify-center gap-4">
@@ -93,6 +98,19 @@ const Login = () => {
             Sign in
           </button>
         </form>
+        <div className="relative my-5">
+          <div className="h-px w-full bg-gray-400"></div>
+          <span className="absolute top-1/2 left-1/2 -translate-1/2 bg-white p-2 text-sm">
+            Or
+          </span>
+        </div>
+        <button
+          className="flex items-center justify-center gap-5 w-full border border-gray-200 bg-white text-[#0891B2] font-semibold px-5 py-3 rounded-lg cursor-pointer hover:bg-[#0891B2] hover:text-white"
+          onClick={() => handleGoogleLogin()}
+        >
+          <img src="/imgs/google.png" className="w-7" />
+          <h2>Google</h2>
+        </button>
         <p className="text-center text-gray-600 text-sm mt-5">
           Don't have an account?{" "}
           <Link to={"/auth/sign-up"} className="text-[#0891B2] font-semibold">

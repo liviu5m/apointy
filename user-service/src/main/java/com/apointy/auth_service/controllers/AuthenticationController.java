@@ -8,27 +8,24 @@ import com.apointy.auth_service.services.JwtService;
 import com.apointy.auth_service.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
 @RequestMapping("/auth")
 @RestController
+@RequiredArgsConstructor
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
     private final BrevoEmailService brevoEmailService;
     private final UserService userService;
-
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, BrevoEmailService brevoEmailService, UserService userService) {
-        this.jwtService = jwtService;
-        this.authenticationService = authenticationService;
-        this.brevoEmailService = brevoEmailService;
-        this.userService = userService;
-    }
+    private final RestTemplate restTemplate;
 
     @GetMapping
     public ResponseEntity<?> getUser(){
@@ -122,4 +119,33 @@ public class AuthenticationController {
         return ResponseEntity.ok("Password reset successfully");
     }
 
+    @PostMapping("/google-sync")
+    public ResponseEntity<?> syncGoogleUser(@RequestBody GoogleSyncDto googleSyncDto, HttpServletResponse responseHttp) {
+        String googleUri = "https://www.googleapis.com/oauth2/v3/userinfo";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(googleSyncDto.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                googleUri, HttpMethod.GET, entity, Map.class
+        );
+
+        Map<String, Object> attributes = response.getBody();
+        String email = (String) attributes.get("email");
+        String name = (String) attributes.get("name");
+        System.out.println(email);
+        User user = authenticationService.processOAuthPostLogin(email, name, googleSyncDto.getRole());
+        String jwt = jwtService.generateToken(user);
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge((int) (jwtService.getExpirationTime() / 1000))
+                .sameSite("None")
+                .build();
+
+        responseHttp.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
+        return ResponseEntity.ok("Successfully Logged in");
+    }
 }
