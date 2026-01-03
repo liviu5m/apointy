@@ -13,10 +13,13 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 @Component
-@RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements ServerAuthenticationSuccessHandler {
 
     private final ServerOAuth2AuthorizedClientRepository authorizedClientRepository;
+
+    public OAuth2LoginSuccessHandler(ServerOAuth2AuthorizedClientRepository authorizedClientRepository) {
+        this.authorizedClientRepository = authorizedClientRepository;
+    }
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {

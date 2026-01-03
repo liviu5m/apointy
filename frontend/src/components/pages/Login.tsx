@@ -20,6 +20,7 @@ const Login = () => {
     mutationFn: () => authenticateUser(data),
     onSuccess: (data) => {
       console.log(data);
+      navigate("/");
     },
     onError: (error: AxiosError) => {
       if (error.response?.data) {

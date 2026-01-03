@@ -6,8 +6,10 @@ server:
   port: 8761
 
 eureka:
+  instance:
+    hostname: eureka-server
   client:
     register-with-eureka: false
     fetch-registry: false
-  instance:
-    hostname: localhost
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

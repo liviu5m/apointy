@@ -8,9 +8,10 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: http://localhost:8081
+          #          uri: http://localhost:8081
+          uri: lb://user-service
           predicates:
-            - Path=/user/**, /auth/**
+            - Path=/user/**,/auth/**
           filters:
   security:
     oauth2:
@@ -30,3 +31,8 @@ security:
   jwt:
     secret-key: ${JWT_SECRET}
     expiration-time: 3600000
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
