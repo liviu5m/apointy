@@ -1,14 +1,17 @@
 import { googleSyncAccount } from "@/api/user";
 import { useMutation } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { Store, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import Loader from "../elements/Loader";
 
 const SocialCallback = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [searchParams] = useSearchParams();
-  
+  const [loading, setLoading] = useState(true);
+
   const { mutate: login } = useMutation({
     mutationKey: ["oauth2-user"],
     mutationFn: () =>
@@ -17,12 +20,29 @@ const SocialCallback = () => {
       console.log(data);
       navigate("/");
     },
-    onError: (err) => {
+    onError: (err: AxiosError) => {
       console.log(err);
+      if (
+        err?.response?.data ==
+        "You can log in only using credentials to this account"
+      )
+        navigate("/auth/login", {
+          state: {
+            error: "You can only log in to that account using credentials",
+          },
+        });
+      setLoading(false);
     },
   });
 
-  return (
+  useEffect(() => {
+    setLoading(true);
+    login();
+  }, []);
+
+  return loading ? (
+    <Loader />
+  ) : (
     <div className="flex items-center justify-center h-screen w-screen flex-col">
       <div>
         <h2 className="text-center text-4xl font-bold">

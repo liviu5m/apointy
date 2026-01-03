@@ -2,8 +2,8 @@ import { authenticateUser } from "@/api/user";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Calendar } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useFetcher, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
@@ -12,6 +12,8 @@ const Login = () => {
     password: "",
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  const [error, setError] = useState("");
 
   const { mutate: authenticate } = useMutation({
     mutationKey: ["authenticate-user"],
@@ -42,6 +44,16 @@ const Login = () => {
       import.meta.env.VITE_API_URL + "/oauth2/authorization/google";
   };
 
+  useEffect(() => {
+    if (location.state?.error) {
+      setError(location.state.error);
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+      navigate(location.pathname, { replace: true });
+    }
+  }, []);
+
   return (
     <div className="w-screen h-screen bg-[#F8FAFC] flex flex-col items-center justify-center gap-10">
       <div className="flex items-center justify-center gap-4">
@@ -55,6 +67,9 @@ const Login = () => {
         <h3 className="text-gray-400 mt-2 text-center">
           Sign in to manage your appointments
         </h3>
+        {error && (
+          <p className="text-center text-red-500 text-sm mt-5">{error}</p>
+        )}
         <form
           className="mt-10 flex flex-col"
           onSubmit={(e) => {

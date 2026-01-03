@@ -94,8 +94,6 @@ export async function resetPasswordFunc(
 }
 
 export async function googleSyncAccount(role: string, token: string) {
-  console.log(token);
-
   const response = await axios.post(
     `${baseUrl}/auth/google-sync`,
     {
