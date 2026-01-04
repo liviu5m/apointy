@@ -13,7 +13,7 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "../ui/input-otp";
+} from "../../ui/input-otp";
 
 const PasswordResetCode = ({ email }: { email: string }) => {
   const [code, setCode] = useState("");

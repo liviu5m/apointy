@@ -4,13 +4,15 @@ import type { AxiosError } from "axios";
 import { Store, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Loader from "../elements/Loader";
+import Loader from "../elements/common/Loader";
+import { useAppContext } from "@/lib/AppProvider";
 
 const SocialCallback = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
+  const { setUser } = useAppContext();
 
   const { mutate: login } = useMutation({
     mutationKey: ["oauth2-user"],
@@ -18,6 +20,7 @@ const SocialCallback = () => {
       googleSyncAccount(role, searchParams.get("access_token") || ""),
     onSuccess: (data) => {
       console.log(data);
+      setUser(data);
       navigate("/");
     },
     onError: (err: AxiosError) => {

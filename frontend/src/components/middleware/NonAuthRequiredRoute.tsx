@@ -15,11 +15,7 @@ const NonAuthRequiredRoute: React.FC<NonAuthRequiredRouteProps> = ({
 
   if (user) {
     return (
-      <Navigate
-        to="/"
-        state={{ from: location.pathname }}
-        replace={true}
-      />
+      <Navigate to="/" state={{ from: location.pathname }} replace={true} />
     );
   }
 

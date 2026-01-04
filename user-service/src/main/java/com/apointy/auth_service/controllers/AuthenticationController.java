@@ -53,7 +53,7 @@ public class AuthenticationController {
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
-        return ResponseEntity.ok("Successfully logged in");
+        return ResponseEntity.ok(authenticatedUser);
     }
 
     @PostMapping("/logout")
@@ -146,6 +146,6 @@ public class AuthenticationController {
                 .build();
 
         responseHttp.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
-        return ResponseEntity.ok("Successfully Logged in");
+        return ResponseEntity.ok(user);
     }
 }

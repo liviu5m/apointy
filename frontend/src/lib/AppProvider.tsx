@@ -2,11 +2,11 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import type { User } from "./Types";
 import { ToastContainer } from "react-toastify";
 import { getUser } from "@/api/user";
-import Loader from "@/components/elements/Loader";
+import Loader from "@/components/elements/common/Loader";
 
 interface AppContextType {
   user: User | null;
@@ -27,11 +27,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     queryFn: () => getUser(),
   });
 
-  console.log(data, error);
-
   useEffect(() => {
     if (typeof data === "object") setUser(data);
   }, [data]);
+  console.log(user);
 
   return isPending || (data != "Something went wrong." && !user) ? (
     <Loader />

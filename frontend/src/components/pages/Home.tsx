@@ -1,23 +1,16 @@
-import { logoutUser } from "@/api/user";
-import { useMutation } from "@tanstack/react-query";
+import Hero from "../elements/home/Hero";
+import SectionBuilt from "../elements/home/SectionBuilt";
+import SectionNeed from "../elements/home/SectionNeed";
+import BodyLayout from "../layouts/BodyLayout";
 
 const Home = () => {
-  const { mutate: logout } = useMutation({
-    mutationKey: ["logout-user"],
-    mutationFn: () => logoutUser(),
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (err) => {
-      console.log(err);
-    },
-  });
-
+  
   return (
-    <div>
-      <h1>Home</h1>
-      <button onClick={() => logout()}>Log Out</button>
-    </div>
+    <BodyLayout>
+      <Hero />
+      <SectionBuilt />
+      <SectionNeed />
+    </BodyLayout>
   );
 };
 

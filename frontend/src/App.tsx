@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import AuthRequiredRoute from "./components/middleware/NonAuthRequiredRoute";
 import Login from "./components/pages/Login";
 import Signup from "./components/pages/Signup";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -10,6 +9,13 @@ import { AppProvider } from "./lib/AppProvider";
 import Home from "./components/pages/Home";
 import PasswordReset from "./components/pages/PasswordReset";
 import SocialCallback from "./components/pages/SocialCallback";
+import NonAuthRequiredRoute from "./components/middleware/NonAuthRequiredRoute";
+import CustomerDashboard from "./components/pages/customer/CustomerDashboard";
+import CustomerRoute from "./components/middleware/CustomerRoute";
+import OwnerRoute from "./components/middleware/OwnerRoute";
+import OwnerDashboard from "./components/pages/owner/OwnerDashboard";
+import OwnerAppointments from "./components/pages/owner/OwnerAppointments";
+import OwnerServices from "./components/pages/owner/OwnerServices";
 
 function App() {
   const queryClient = new QueryClient();
@@ -18,6 +24,28 @@ function App() {
       <AppProvider>
         <BrowserRouter>
           <Routes>
+            <Route
+              path="/customer/*"
+              element={
+                <CustomerRoute>
+                  <Routes>
+                    <Route path="/dashboard" element={<CustomerDashboard />} />
+                  </Routes>
+                </CustomerRoute>
+              }
+            />
+            <Route
+              path="/owner/*"
+              element={
+                <OwnerRoute>
+                  <Routes>
+                    <Route path="/dashboard" element={<OwnerDashboard />} />
+                    <Route path="/services" element={<OwnerServices />} />
+                    <Route path="/appointments" element={<OwnerAppointments />} />
+                  </Routes>
+                </OwnerRoute>
+              }
+            />
             <Route
               path="/*"
               element={
@@ -29,7 +57,7 @@ function App() {
             <Route
               path="/auth/*"
               element={
-                <AuthRequiredRoute>
+                <NonAuthRequiredRoute>
                   <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/sign-up" element={<Signup />} />
@@ -40,7 +68,7 @@ function App() {
                       element={<SocialCallback />}
                     />
                   </Routes>
-                </AuthRequiredRoute>
+                </NonAuthRequiredRoute>
               }
             />
           </Routes>

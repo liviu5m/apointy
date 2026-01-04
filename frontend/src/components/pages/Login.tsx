@@ -1,4 +1,5 @@
 import { authenticateUser } from "@/api/user";
+import { useAppContext } from "@/lib/AppProvider";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Calendar } from "lucide-react";
@@ -7,6 +8,7 @@ import { Link, useFetcher, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
+  const { setUser } = useAppContext();
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -20,6 +22,7 @@ const Login = () => {
     mutationFn: () => authenticateUser(data),
     onSuccess: (data) => {
       console.log(data);
+      setUser(data);
       navigate("/");
     },
     onError: (error: AxiosError) => {

@@ -40,9 +40,9 @@ public class SecurityConfiguration {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .pathMatchers("/auth/**", "/error/**", "/oauth2/**").permitAll()
+                        .pathMatchers("/service/**", "/user/**").permitAll()
                         .anyExchange().authenticated()
                 )
-                .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .oauth2Login(oauth2 -> oauth2
                         .authenticationSuccessHandler(oAuth2LoginSuccessHandler)
                 )
