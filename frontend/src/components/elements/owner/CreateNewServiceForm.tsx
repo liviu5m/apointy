@@ -1,3 +1,4 @@
+import { createServiceFunc } from "@/api/service";
 import {
   Select,
   SelectContent,
@@ -5,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
 const CreateNewServiceForm = () => {
@@ -17,14 +19,29 @@ const CreateNewServiceForm = () => {
     available: false,
   });
 
-  console.log(data);
+  const { mutate: createService } = useMutation({
+    mutationKey: ["create-service"],
+    mutationFn: () => createServiceFunc(data),
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   return (
-    <form className="space-y-4">
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        createService();
+      }}
+    >
       <div>
         <h4 className="text-sm font-semibold mb-2">Service Name</h4>
         <input
-          type="email"
+          type="text"
           placeholder="e.g. Haircut"
           className="px-5 py-3 rounded-lg border-gray-200 border w-full outline-[#0891B2] text-sm"
           value={data.name}
@@ -100,7 +117,7 @@ const CreateNewServiceForm = () => {
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <button className="px-5 py-3 rounded-lg text-white flex items-center justify-center bg-[#0891B2] gap-3 font-semibold cursor-pointer hover:bg-[#087f9c]">
+        <button className="px-5 py-3 rounded-lg flex items-center justify-center bg-white border border-gray-200 gap-3 font-semibold cursor-pointer hover:bg-gray-50">
           Cancel
         </button>
         <button className="px-5 py-3 rounded-lg text-white flex items-center justify-center bg-[#0891B2] gap-3 font-semibold cursor-pointer hover:bg-[#087f9c]">

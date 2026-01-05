@@ -1,18 +1,25 @@
 package com.apointy.booking_service.controllers;
 
+import com.apointy.booking_service.dtos.ServiceDto;
+import com.apointy.booking_service.models.Service;
+import com.apointy.booking_service.repositories.ServiceRepository;
+import com.apointy.booking_service.service.ServiceService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/service")
+@RequestMapping("/api/service")
 public class ServiceController {
 
-    @GetMapping
-    public ResponseEntity<?> getService(@RequestHeader("X-User-Email") String userEmail){
-        return ResponseEntity.ok("That's good" + userEmail);
+    private final ServiceService serviceService;
+
+    public ServiceController(ServiceService serviceService) {
+        this.serviceService = serviceService;
     }
 
+    @PostMapping
+    public ResponseEntity<?> createService(@RequestBody ServiceDto serviceDto,@RequestHeader("X-User-Id") Long userId) {
+        Service service = serviceService.createService(serviceDto, userId);
+        return ResponseEntity.ok("Ok");
+    }
 }

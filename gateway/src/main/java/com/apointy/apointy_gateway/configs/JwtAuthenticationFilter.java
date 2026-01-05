@@ -36,8 +36,9 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         try {
             String userEmail = jwtService.extractUsername(jwt);
             if (userEmail != null && !jwtService.isTokenExpired(jwt)) {
+                String userId = jwtService.extractUserId(jwt);
                 ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                        .header("X-User-Email", userEmail)
+                        .header("X-User-Id", userId)
                         .build();
 
                 return chain.filter(exchange.mutate().request(modifiedRequest).build());

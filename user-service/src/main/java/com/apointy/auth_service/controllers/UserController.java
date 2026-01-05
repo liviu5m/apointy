@@ -1,16 +1,26 @@
 package com.apointy.auth_service.controllers;
 
+import com.apointy.auth_service.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping
     public ResponseEntity<?> getUser(){
         return ResponseEntity.ok("Hello World from Auth Service");
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserByEmail(@PathVariable Long id){
+        return ResponseEntity.ok(userService.findById(id));
+    }
 }

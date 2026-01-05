@@ -1,10 +1,15 @@
 package com.apointy.booking_service.models;
 
 import com.apointy.booking_service.enums.ServiceDuration;
+import com.apointy.booking_service.repositories.ServiceRepository;
 import jakarta.persistence.*;
-import jdk.jfr.Category;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -14,6 +19,9 @@ public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Column(nullable = false)
     private String name;
@@ -27,12 +35,23 @@ public class Service {
     @Column(nullable = false)
     private String category;
 
-    @Column(length = 1000)
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private Boolean available;
 
-    public Service(String name, ServiceDuration duration, Double price, String category, String description, Boolean available) {
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+
+    public Service(Long userId, String name, ServiceDuration duration, Double price, String category, String description, Boolean available) {
+        this.userId = userId;
         this.name = name;
         this.duration = duration;
         this.price = price;
@@ -42,18 +61,5 @@ public class Service {
     }
 
     public Service() {
-    }
-
-    @Override
-    public String toString() {
-        return "Service{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", duration=" + duration +
-                ", price=" + price +
-                ", category='" + category + '\'' +
-                ", description='" + description + '\'' +
-                ", available=" + available +
-                '}';
     }
 }

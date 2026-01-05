@@ -26,4 +26,13 @@ export type PasswordState = {
 export type PasswordResetData = {
   password: string;
   passwordConfirmation: string;
-}
+};
+
+export type ServiceData = {
+  name: string;
+  duration: string;
+  price: string;
+  category: string;
+  description: string;
+  available: boolean;
+};

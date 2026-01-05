@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping("/auth")
@@ -42,7 +43,9 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto, HttpServletResponse response) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", authenticatedUser.getId());
+        String jwtToken = jwtService.generateToken(extraClaims, authenticatedUser);
 
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtToken)
                 .httpOnly(true)
@@ -136,7 +139,9 @@ public class AuthenticationController {
         String name = (String) attributes.get("name");
         System.out.println(email);
         User user = authenticationService.processOAuthPostLogin(email, name, googleSyncDto.getRole());
-        String jwt = jwtService.generateToken(user);
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", user.getId());
+        String jwt = jwtService.generateToken(extraClaims, user);
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
                 .httpOnly(true)
                 .secure(true)

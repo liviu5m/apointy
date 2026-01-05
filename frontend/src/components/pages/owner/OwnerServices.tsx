@@ -7,7 +7,7 @@ import { useState } from "react";
 
 const OwnerServices = () => {
   const { user } = useAppContext();
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <BodyLayout>
