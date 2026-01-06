@@ -20,3 +20,9 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+
+
+application:
+  services:
+    user:
+      url: "http://localhost:8081"

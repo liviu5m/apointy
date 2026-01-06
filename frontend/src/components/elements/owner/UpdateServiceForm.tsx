@@ -1,4 +1,4 @@
-import { createServiceFunc } from "@/api/service";
+import { updateService } from "@/api/service";
 import {
   Select,
   SelectContent,
@@ -6,34 +6,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Service } from "@/lib/Types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-const CreateNewServiceForm = ({
-  setIsModalOpen,
+const UpdateServiceForm = ({
+  setEditService,
+  editService,
 }: {
-  setIsModalOpen: (e: boolean) => void;
+  setEditService: (e: Service | null) => void;
+  editService: Service;
 }) => {
   const queryClient = useQueryClient();
   const [data, setData] = useState({
-    name: "",
-    duration: "",
-    price: "",
-    category: "General",
-    description: "",
-    available: false,
+    name: editService.name,
+    duration: editService.duration,
+    price: editService.price,
+    category: editService.category,
+    description: editService.description,
+    available: editService.available,
   });
 
-  const { mutate: createService } = useMutation({
-    mutationKey: ["create-service"],
-    mutationFn: () => createServiceFunc(data),
+  const { mutate: edit } = useMutation({
+    mutationKey: ["edit-service"],
+    mutationFn: () => updateService(data, editService.id),
     onSuccess: (data) => {
       console.log(data);
-      toast("Service created successfully");
+      toast("Service updated successfully");
       queryClient.invalidateQueries({ queryKey: ["owner-services"] });
-      setIsModalOpen(false);
+      setEditService(null);
     },
     onError: (error: AxiosError) => {
       if (error.response?.data) {
@@ -62,7 +65,7 @@ const CreateNewServiceForm = ({
       className="space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
-        createService();
+        edit();
       }}
     >
       <div>
@@ -146,7 +149,7 @@ const CreateNewServiceForm = ({
         <button
           type="button"
           className="px-5 py-3 rounded-lg flex items-center justify-center bg-white border border-gray-200 gap-3 font-semibold cursor-pointer hover:bg-gray-50"
-          onClick={() => setIsModalOpen(false)}
+          onClick={() => setEditService(null)}
         >
           Cancel
         </button>
@@ -158,4 +161,4 @@ const CreateNewServiceForm = ({
   );
 };
 
-export default CreateNewServiceForm;
+export default UpdateServiceForm;

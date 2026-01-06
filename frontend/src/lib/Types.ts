@@ -36,3 +36,13 @@ export type ServiceData = {
   description: string;
   available: boolean;
 };
+
+export type Service = {
+  id: number;
+  name: string;
+  duration: string;
+  price: string;
+  category: string;
+  description: string;
+  available: boolean;
+};

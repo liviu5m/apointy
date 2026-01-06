@@ -10,7 +10,7 @@ type LayoutProps = {
 const BodyLayout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex text-[#121212] bg-[#F9FAFB] min-h-screen">
-      <div className="w-full min-w-0">
+      <div className="w-full min-w-0 flex flex-col justify-between">
         <Header />
         <div className="h-[80px]"></div>
         <main>{children}</main>

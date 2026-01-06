@@ -45,11 +45,6 @@ public class Service {
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private Date updatedAt;
-
-
     public Service(Long userId, String name, ServiceDuration duration, Double price, String category, String description, Boolean available) {
         this.userId = userId;
         this.name = name;

@@ -11,7 +11,7 @@ public class ServiceDto {
     @NotBlank(message = "Name is required")
     private String name;
     @NotBlank(message = "Duration is required")
-    private ServiceDuration duration;
+    private String duration;
     @NotNull(message = "Price is required")
     private Double price;
     @NotBlank(message = "Category is required")

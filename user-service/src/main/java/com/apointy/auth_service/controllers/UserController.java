@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserByEmail(@PathVariable Long id){
+    public ResponseEntity<?> getUserByEmail(@PathVariable Long id,@RequestHeader("X-User-Id") Long userId){
         return ResponseEntity.ok(userService.findById(id));
     }
 }
