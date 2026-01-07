@@ -16,6 +16,8 @@ import OwnerRoute from "./components/middleware/OwnerRoute";
 import OwnerDashboard from "./components/pages/owner/OwnerDashboard";
 import OwnerAppointments from "./components/pages/owner/OwnerAppointments";
 import OwnerServices from "./components/pages/owner/OwnerServices";
+import CustomerBookNow from "./components/pages/customer/CustomerBookNow";
+import 'rc-slider/assets/index.css';
 
 function App() {
   const queryClient = new QueryClient();
@@ -30,6 +32,7 @@ function App() {
                 <CustomerRoute>
                   <Routes>
                     <Route path="/dashboard" element={<CustomerDashboard />} />
+                    <Route path="/book-now" element={<CustomerBookNow />} />
                   </Routes>
                 </CustomerRoute>
               }
@@ -41,7 +44,10 @@ function App() {
                   <Routes>
                     <Route path="/dashboard" element={<OwnerDashboard />} />
                     <Route path="/services" element={<OwnerServices />} />
-                    <Route path="/appointments" element={<OwnerAppointments />} />
+                    <Route
+                      path="/appointments"
+                      element={<OwnerAppointments />}
+                    />
                   </Routes>
                 </OwnerRoute>
               }

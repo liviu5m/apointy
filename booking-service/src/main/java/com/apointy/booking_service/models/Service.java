@@ -32,8 +32,9 @@ public class Service {
     @Column(nullable = false)
     private Double price;
 
-    @Column(nullable = false)
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private ServiceCategory category;
 
     @Column(nullable = false)
     private String description;
@@ -45,7 +46,7 @@ public class Service {
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
 
-    public Service(Long userId, String name, ServiceDuration duration, Double price, String category, String description, Boolean available) {
+    public Service(Long userId, String name, ServiceDuration duration, Double price, ServiceCategory category, String description, Boolean available) {
         this.userId = userId;
         this.name = name;
         this.duration = duration;

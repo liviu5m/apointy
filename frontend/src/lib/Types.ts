@@ -16,6 +16,7 @@ export type User = {
   email: string;
   fullName: string;
   role: string;
+  createdAt: string;
 };
 
 export type PasswordState = {
@@ -32,7 +33,7 @@ export type ServiceData = {
   name: string;
   duration: string;
   price: string;
-  category: string;
+  categoryId: string;
   description: string;
   available: boolean;
 };
@@ -42,7 +43,14 @@ export type Service = {
   name: string;
   duration: string;
   price: string;
-  category: string;
+  category: ServiceCategory;
   description: string;
   available: boolean;
+  createdAt: string;
+};
+
+export type ServiceCategory = {
+  id: number;
+  name: string;
+  createdAt: string;
 };

@@ -30,7 +30,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   useEffect(() => {
     if (typeof data === "object") setUser(data);
   }, [data]);
-  console.log(user);
 
   return isPending || (data != "Something went wrong." && !user) ? (
     <Loader />

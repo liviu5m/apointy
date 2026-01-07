@@ -1,4 +1,9 @@
-import { deleteService, getAllServices } from "@/api/service";
+import {
+  deleteService,
+  getAllServices,
+  getAllServicesByUserId,
+} from "@/api/service";
+import { getAllServiceCategories } from "@/api/serviceCategory";
 import Loader from "@/components/elements/common/Loader";
 import { Modal } from "@/components/elements/common/Modal";
 import CreateNewServiceForm from "@/components/elements/owner/CreateNewServiceForm";
@@ -21,7 +26,7 @@ const OwnerServices = () => {
 
   const { data: services, isPending } = useQuery({
     queryKey: ["owner-services"],
-    queryFn: () => getAllServices(),
+    queryFn: () => getAllServicesByUserId(),
   });
 
   const handleDelete = (id: number) => {
@@ -40,6 +45,11 @@ const OwnerServices = () => {
     });
   };
 
+  const { data: categories, isPending: isCategoriesLoading } = useQuery({
+    queryKey: ["service-categories"],
+    queryFn: () => getAllServiceCategories(),
+  });
+
   const { mutate: removeService } = useMutation({
     mutationKey: ["delete-service"],
     mutationFn: (id: number) => deleteService(id),
@@ -54,7 +64,7 @@ const OwnerServices = () => {
     },
   });
 
-  return isPending ? (
+  return isPending || isCategoriesLoading ? (
     <Loader />
   ) : (
     <BodyLayout>
@@ -102,7 +112,7 @@ const OwnerServices = () => {
                               {service.name}
                             </h3>
                             <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full mt-1">
-                              {service.category}
+                              {service.category.name}
                             </span>
                           </div>
                           <div className="flex gap-2">
@@ -154,7 +164,7 @@ const OwnerServices = () => {
             onClose={() => setIsModalOpen(false)}
             title="Add New Service"
           >
-            <CreateNewServiceForm setIsModalOpen={setIsModalOpen} />
+            <CreateNewServiceForm setIsModalOpen={setIsModalOpen} categories={categories} />
           </Modal>
         )}
         {editService && (
@@ -166,6 +176,7 @@ const OwnerServices = () => {
             <UpdateServiceForm
               setEditService={setEditService}
               editService={editService}
+              categories={categories}
             />
           </Modal>
         )}

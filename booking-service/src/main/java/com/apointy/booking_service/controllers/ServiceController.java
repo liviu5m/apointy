@@ -1,5 +1,6 @@
 package com.apointy.booking_service.controllers;
 
+import com.apointy.booking_service.dtos.PriceDto;
 import com.apointy.booking_service.dtos.ServiceDto;
 import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.repositories.ServiceRepository;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/service")
@@ -21,6 +23,18 @@ public class ServiceController {
     }
 
     @GetMapping
+    public ResponseEntity<?> getAllServices(@RequestParam(required = false) String name, @RequestParam(required = false) String category, @RequestParam(required = false) String duration, @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
+        List<Service> services = serviceService.getAllServices(name, category, duration, minPrice, maxPrice);
+        return ResponseEntity.ok(services);
+    }
+
+    @GetMapping("/price")
+    public ResponseEntity<?> getPriceRangeServices() {
+        Object[] prices = serviceService.getMaxMinPriceServices();
+        return ResponseEntity.ok(prices);
+    }
+
+    @GetMapping("/user-id")
     public ResponseEntity<?> getAllServicesByUserId(@RequestHeader("X-User-Id") Long userId) {
         List<Service> services = serviceService.getAllServiceByUserId(userId);
         return ResponseEntity.ok(services);

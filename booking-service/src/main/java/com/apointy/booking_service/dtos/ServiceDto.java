@@ -14,8 +14,8 @@ public class ServiceDto {
     private String duration;
     @NotNull(message = "Price is required")
     private Double price;
-    @NotBlank(message = "Category is required")
-    private String category;
+    @NotNull(message = "Category is required")
+    private Long categoryId;
     @NotBlank(message = "Description is required")
     private String description;
     private Boolean available;

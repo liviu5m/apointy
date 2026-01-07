@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Service } from "@/lib/Types";
+import type { Service, ServiceCategory } from "@/lib/Types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useState } from "react";
@@ -15,16 +15,18 @@ import { toast } from "react-toastify";
 const UpdateServiceForm = ({
   setEditService,
   editService,
+  categories,
 }: {
   setEditService: (e: Service | null) => void;
   editService: Service;
+  categories: ServiceCategory[];
 }) => {
   const queryClient = useQueryClient();
   const [data, setData] = useState({
     name: editService.name,
     duration: editService.duration,
     price: editService.price,
-    category: editService.category,
+    categoryId: String(editService.category.id),
     description: editService.description,
     available: editService.available,
   });
@@ -112,12 +114,23 @@ const UpdateServiceForm = ({
       </div>
       <div>
         <h4 className="text-sm font-semibold mb-2">Category</h4>
-        <input
-          type="text"
-          className="px-5 py-3 rounded-lg border-gray-200 border w-full outline-[#0891B2] text-sm"
-          value={data.category}
-          onChange={(e) => setData({ ...data, category: e.target.value })}
-        />
+        <Select
+          value={data.categoryId}
+          onValueChange={(e) => setData({ ...data, categoryId: e })}
+        >
+          <SelectTrigger className="w-full py-5 text-sm">
+            <SelectValue placeholder="Choose a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((category: ServiceCategory, i: number) => {
+              return (
+                <SelectItem value={String(category.id)} key={i}>
+                  {category.name}
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-2">
         <h4 className="text-sm font-semibold mb-2">Description</h4>
