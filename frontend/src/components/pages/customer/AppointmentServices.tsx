@@ -8,18 +8,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { Search, X } from "lucide-react";
+import { Clock, Search, X } from "lucide-react";
 import { getAllServiceCategories } from "@/api/serviceCategory";
-import type { ServiceCategory } from "@/lib/Types";
+import type { Service, ServiceCategory } from "@/lib/Types";
 import Loader from "@/components/elements/common/Loader";
 import Slider from "rc-slider";
+import { convertEnumServiceDuration } from "@/lib/utils";
+import Pagination from "@/components/elements/common/Pagination";
 
 const AppointmentServices = () => {
-  // const { data: services, isPending } = useQuery({
-  //   queryKey: ["owner-services"],
-  //   queryFn: () => getAllServices(filterData),
-  //   placeholderData: keepPreviousData,
-  // });
+  const [filterData, setFilterData] = useState({
+    name: "",
+    duration: "",
+    categoryId: "",
+    prices: [0, 0],
+  });
+  const [page, setPage] = useState(1);
+  const pageSize = 1;
+
+  const { data: services, isPending } = useQuery({
+    queryKey: ["owner-services", filterData, page],
+    queryFn: () => getAllServices(filterData, page, pageSize),
+    placeholderData: keepPreviousData,
+  });
+
+  console.log(services);
+
   const { data: categories, isPending: isCategoriesLoading } = useQuery({
     queryKey: ["service-categories"],
     queryFn: () => getAllServiceCategories(),
@@ -30,13 +44,6 @@ const AppointmentServices = () => {
     queryFn: () => getPriceRange(),
   });
 
-  const [filterData, setFilterData] = useState({
-    name: "",
-    duration: "",
-    categoryId: "",
-    prices: [0, 0],
-  });
-
   useEffect(() => {
     if (priceRange)
       setFilterData({
@@ -45,9 +52,7 @@ const AppointmentServices = () => {
       });
   }, [priceRange]);
 
-  // console.log(services);
-
-  return isCategoriesLoading || isPriceRangeLoading ? (
+  return isCategoriesLoading || isPriceRangeLoading || isPending ? (
     <Loader />
   ) : (
     <div className="p-6">
@@ -66,46 +71,8 @@ const AppointmentServices = () => {
               className="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-cyan-600 focus:border-transparent"
             />
           </div>
-          <Select
-            value={filterData.duration}
-            onValueChange={(e) => setFilterData({ ...filterData, duration: e })}
-          >
-            <SelectTrigger className="w-full py-5 text-sm">
-              <SelectValue placeholder="Duration" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="MIN_15">15 min</SelectItem>
-              <SelectItem value="MIN_30">30 min</SelectItem>
-              <SelectItem value="MIN_45">45 min</SelectItem>
-              <SelectItem value="HOUR_1">1 hour</SelectItem>
-              <SelectItem value="HOUR_1_5">1.5 hours</SelectItem>
-              <SelectItem value="HOUR_2">2 hours</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Select
-            value={filterData.categoryId}
-            onValueChange={(e) =>
-              setFilterData({ ...filterData, categoryId: e })
-            }
-          >
-            <SelectTrigger className="w-full py-5 text-sm">
-              <SelectValue placeholder="Choose a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category: ServiceCategory, i: number) => {
-                return (
-                  <SelectItem value={String(category.id)} key={i}>
-                    {category.name}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
-          <div className="w-full max-w-xs p-4 bg-white rounded-lg shadow-sm border border-gray-100">
-            <div className="flex justify-between items-center mb-4">
+          <div className="w-full max-w-xs py-2 px-4 bg-white rounded-lg shadow-sm border border-gray-100 relative">
+            <div className="flex justify-between items-center mb-1 absolute -top-8 w-full">
               <label className="text-sm font-semibold text-gray-700">
                 Price Range
               </label>
@@ -115,7 +82,6 @@ const AppointmentServices = () => {
                 <span>${filterData.prices[1]}</span>
               </div>
             </div>
-
             <Slider
               range
               min={priceRange[0][0]}
@@ -125,7 +91,7 @@ const AppointmentServices = () => {
                 setFilterData({ ...filterData, prices: val as number[] })
               }
               trackStyle={{
-                backgroundColor: "#3b82f6", // tailwind blue-500
+                backgroundColor: "#3b82f6",
                 height: 6,
               }}
               handleStyle={[
@@ -151,14 +117,47 @@ const AppointmentServices = () => {
                 height: 6,
               }}
             />
-
-            <div className="flex justify-between mt-2">
-              <span className="text-xs text-gray-400">${priceRange[0][0]}</span>
-              <span className="text-xs text-gray-400">
-                ${priceRange[0][1]}+
-              </span>
-            </div>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Select
+            value={filterData.categoryId}
+            onValueChange={(e) =>
+              setFilterData({ ...filterData, categoryId: e })
+            }
+          >
+            <SelectTrigger className="w-full py-5 text-sm">
+              <SelectValue placeholder="Choose a category" />
+            </SelectTrigger>
+            <SelectContent className="">
+              <SelectItem value={"all"}>All categories</SelectItem>
+              {categories.map((category: ServiceCategory, i: number) => {
+                return (
+                  <SelectItem value={String(category.id)} key={i}>
+                    {category.name}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+          <Select
+            value={filterData.duration}
+            onValueChange={(e) => setFilterData({ ...filterData, duration: e })}
+          >
+            <SelectTrigger className="w-full py-5 text-sm">
+              <SelectValue placeholder="Duration" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All durations</SelectItem>
+              <SelectItem value="MIN_15">15 min</SelectItem>
+              <SelectItem value="MIN_30">30 min</SelectItem>
+              <SelectItem value="MIN_45">45 min</SelectItem>
+              <SelectItem value="HOUR_1">1 hour</SelectItem>
+              <SelectItem value="HOUR_1_5">1.5 hours</SelectItem>
+              <SelectItem value="HOUR_2">2 hours</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex items-center justify-between pt-2">
@@ -177,11 +176,13 @@ const AppointmentServices = () => {
           )} */}
         </div>
       </div>
+      <p className="my-5 text-gray-600 text-sm">
+        {services.content && `${services.totalElements} services available`}
+      </p>
       <div className="grid gap-4">
-        {/* {activeServices.map((service) => (
+        {services.content.map((service: Service) => (
           <button
             key={service.id}
-            onClick={() => handleServiceSelect(service)}
             className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50 transition-all text-left group"
           >
             <div>
@@ -193,7 +194,8 @@ const AppointmentServices = () => {
               </p>
               <div className="flex items-center gap-4 mt-2 text-sm text-slate-600">
                 <span className="flex items-center">
-                  <Clock className="h-3.5 w-3.5 mr-1" /> {service.duration} min
+                  <Clock className="h-3.5 w-3.5 mr-1" />{" "}
+                  {convertEnumServiceDuration(service.duration)}
                 </span>
               </div>
             </div>
@@ -201,8 +203,14 @@ const AppointmentServices = () => {
               ${service.price}
             </div>
           </button>
-        ))} */}
+        ))}
       </div>
+      <Pagination
+        items={services.totalElements}
+        pageSize={pageSize}
+        currentPage={page}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

@@ -24,14 +24,24 @@ export async function getAllServicesByUserId() {
   return response.data;
 }
 
-export async function getAllServices(data: FilterData) {
+export async function getAllServices(
+  data: FilterData,
+  page: number,
+  pageSize: number
+) {
   const response = await axios.get(`${baseUrl}/api/service`, {
     params: {
-      name: data.name,
-      duration: data.duration,
-      category: data.categoryId,
+      name: data.name || null,
+      duration:
+        data.duration !== "all" && data.duration !== "" ? data.duration : null,
+      categoryId:
+        data.categoryId !== "all" && data.categoryId !== ""
+          ? data.categoryId
+          : null,
       minPrice: data.prices[0],
       maxPrice: data.prices[1],
+      page: page - 1,
+      size: pageSize,
     },
     withCredentials: true,
   });

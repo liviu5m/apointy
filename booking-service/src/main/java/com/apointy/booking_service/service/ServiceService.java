@@ -9,6 +9,10 @@ import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.models.ServiceCategory;
 import com.apointy.booking_service.repositories.ServiceRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
@@ -26,8 +30,9 @@ public class ServiceService {
         this.userClient = userClient;
     }
 
-    public List<Service> getAllServices(String name, String category, String duration, Double minPrice, Double maxPrice) {
-        return serviceRepository.findServicesWithFilters(name, category, duration, minPrice, maxPrice);
+    public Page<Service> getAllServices(String name, Long categoryId, ServiceDuration duration, Double minPrice, Double maxPrice, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return serviceRepository.findServicesWithFilters(name, categoryId, duration, minPrice, maxPrice, pageable);
     }
 
     public Object[] getMaxMinPriceServices() {

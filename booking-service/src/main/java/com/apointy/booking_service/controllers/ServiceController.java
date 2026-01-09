@@ -2,10 +2,12 @@ package com.apointy.booking_service.controllers;
 
 import com.apointy.booking_service.dtos.PriceDto;
 import com.apointy.booking_service.dtos.ServiceDto;
+import com.apointy.booking_service.enums.ServiceDuration;
 import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.repositories.ServiceRepository;
 import com.apointy.booking_service.service.ServiceService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +25,14 @@ public class ServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllServices(@RequestParam(required = false) String name, @RequestParam(required = false) String category, @RequestParam(required = false) String duration, @RequestParam(required = false) Double minPrice, @RequestParam(required = false) Double maxPrice) {
-        List<Service> services = serviceService.getAllServices(name, category, duration, minPrice, maxPrice);
+    public ResponseEntity<?> getAllServices(@RequestParam(required = false) String name,
+                                            @RequestParam(required = false) Long categoryId,
+                                            @RequestParam(required = false) ServiceDuration duration,
+                                            @RequestParam(required = false) Double minPrice,
+                                            @RequestParam(required = false) Double maxPrice,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
+        Page<Service> services = serviceService.getAllServices(name, categoryId, duration, minPrice, maxPrice, page, size);
         return ResponseEntity.ok(services);
     }
 
