@@ -10,13 +10,21 @@ import {
 import { useEffect, useState } from "react";
 import { Clock, Search, X } from "lucide-react";
 import { getAllServiceCategories } from "@/api/serviceCategory";
-import type { Service, ServiceCategory } from "@/lib/Types";
+import type { AppointmentData, Service, ServiceCategory } from "@/lib/Types";
 import Loader from "@/components/elements/common/Loader";
 import Slider from "rc-slider";
 import { convertEnumServiceDuration } from "@/lib/utils";
 import Pagination from "@/components/elements/common/Pagination";
 
-const AppointmentServices = () => {
+const AppointmentServices = ({
+  setStep,
+  setData,
+  data,
+}: {
+  setStep: (e: number) => void;
+  setData: (e: AppointmentData) => void;
+  data: AppointmentData;
+}) => {
   const [filterData, setFilterData] = useState({
     name: "",
     duration: "",
@@ -24,15 +32,13 @@ const AppointmentServices = () => {
     prices: [0, 0],
   });
   const [page, setPage] = useState(1);
-  const pageSize = 1;
+  const pageSize = 10;
 
   const { data: services, isPending } = useQuery({
     queryKey: ["owner-services", filterData, page],
     queryFn: () => getAllServices(filterData, page, pageSize),
     placeholderData: keepPreviousData,
   });
-
-  console.log(services);
 
   const { data: categories, isPending: isCategoriesLoading } = useQuery({
     queryKey: ["service-categories"],
@@ -161,34 +167,46 @@ const AppointmentServices = () => {
         </div>
 
         <div className="flex items-center justify-between pt-2">
-          {/* <p className="text-sm text-slate-600">
-            {filteredServices.length}{" "}
-            {filteredServices.length === 1 ? "service" : "services"} available
+          <p className="text-sm text-slate-600">
+            {services.content.length}{" "}
+            {services.content.length === 1 ? "service" : "services"} available
           </p>
-          {hasActiveFilters && (
+          {filterData && (
             <button
-              onClick={clearFilters}
-              className="flex items-center gap-1 text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors"
+              onClick={() =>
+                setFilterData({
+                  name: "",
+                  duration: "",
+                  categoryId: "",
+                  prices: [priceRange[0][0], priceRange[0][1]],
+                })
+              }
+              className="flex items-center gap-1 text-sm text-cyan-600 hover:text-cyan-700 font-medium transition-colors cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
               Clear filters
             </button>
-          )} */}
+          )}
         </div>
       </div>
-      <p className="my-5 text-gray-600 text-sm">
-        {services.content && `${services.totalElements} services available`}
-      </p>
       <div className="grid gap-4">
         {services.content.map((service: Service) => (
           <button
             key={service.id}
-            className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50 transition-all text-left group"
+            className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-cyan-500 hover:bg-cyan-50 transition-all text-left group cursor-pointer"
+            onClick={() => {
+              setData({ ...data, service: service });
+              setStep(2);
+            }}
           >
             <div>
-              <h3 className="font-semibold text-slate-900 group-hover:text-cyan-700">
-                {service.name}
+              <h3 className="font-semibold text-slate-900 group-hover:text-cyan-700 flex gap-3 items-center">
+                <span>{service.name}</span>
+                <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">
+                  {service.category.name}
+                </span>
               </h3>
+
               <p className="text-sm text-slate-500 mt-1">
                 {service.description}
               </p>

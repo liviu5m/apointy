@@ -31,3 +31,23 @@ export function convertEnumServiceDuration(duration: string) {
       return "";
   }
 }
+
+
+export function convertEnumToMins(duration: string) {
+  switch (duration) {
+    case "MIN_15":
+      return 15;
+    case "MIN_30":
+      return 30;
+    case "MIN_45":
+      return 45;
+    case "HOUR_1":
+      return 60;
+    case "HOUR_1_5":
+      return 90;
+    case "HOUR_2":
+      return 120;
+    default:
+      return 0;
+  }
+}

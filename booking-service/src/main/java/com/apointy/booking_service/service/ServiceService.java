@@ -30,6 +30,11 @@ public class ServiceService {
         this.userClient = userClient;
     }
 
+    public Service getServiceById(Long id) {
+        Service service = serviceRepository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
+        return service;
+    }
+
     public Page<Service> getAllServices(String name, Long categoryId, ServiceDuration duration, Double minPrice, Double maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return serviceRepository.findServicesWithFilters(name, categoryId, duration, minPrice, maxPrice, pageable);

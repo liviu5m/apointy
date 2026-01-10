@@ -54,3 +54,10 @@ export type ServiceCategory = {
   name: string;
   createdAt: string;
 };
+
+export type AppointmentData = {
+  service: null | Service;
+  date: string;
+  time: string;
+  notes: string;
+};

@@ -1,11 +1,20 @@
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { ArrowLeft } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AppointmentServices from "./AppointmentServices";
+import AppointmentServices from "../../elements/customer/AppointmentServices";
+import type { AppointmentData } from "@/lib/Types";
+import TimeAndDatePicker from "@/components/elements/customer/TimeAndDatePicker";
+import ConfirmBooking from "@/components/elements/customer/ConfirmBooking";
 
 const CustomerBookNow = () => {
   const [step, setStep] = useState(1);
+  const [data, setData] = useState<AppointmentData>({
+    service: null,
+    date: "",
+    time: "",
+    notes: "",
+  });
   const navigate = useNavigate();
 
   return (
@@ -83,109 +92,25 @@ const CustomerBookNow = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-          {step === 1 && <AppointmentServices />}
+          {step === 1 && (
+            <AppointmentServices
+              setStep={setStep}
+              data={data}
+              setData={setData}
+            />
+          )}
 
-          {/* {step === 2 && selectedService && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-6">Select Date & Time</h2>
+          {step === 2 && data.service && (
+            <TimeAndDatePicker
+              setStep={setStep}
+              data={data}
+              setData={setData}
+            />
+          )}
 
-              <div className="mb-8">
-                <h3 className="text-sm font-medium text-slate-700 mb-3">
-                  Date
-                </h3>
-                <DateSelector
-                  selectedDate={selectedDate}
-                  onSelect={setSelectedDate}
-                />
-              </div>
-
-              {selectedDate && (
-                <div className="mb-8 animate-in fade-in slide-in-from-top-4">
-                  <h3 className="text-sm font-medium text-slate-700 mb-3">
-                    Available Time Slots
-                  </h3>
-                  <TimeSlotSelector
-                    selectedTime={selectedTime}
-                    onSelect={setSelectedTime}
-                    duration={selectedService.duration}
-                  />
-                </div>
-              )}
-
-              <div className="flex justify-end pt-4 border-t border-slate-100">
-                <button
-                  onClick={handleDateTimeSelect}
-                  disabled={!selectedDate || !selectedTime}
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
-          )} */}
-
-          {/* {step === 3 && selectedService && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-6">Confirm Booking</h2>
-
-              <div className="bg-slate-50 rounded-lg p-6 mb-6 space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Service</span>
-                  <span className="font-semibold text-slate-900">
-                    {selectedService.name}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Date</span>
-                  <span className="font-semibold text-slate-900">
-                    {selectedDate &&
-                      format(parseISO(selectedDate), "EEEE, MMMM d, yyyy")}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Time</span>
-                  <span className="font-semibold text-slate-900">
-                    {selectedTime}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-600">Duration</span>
-                  <span className="font-semibold text-slate-900">
-                    {selectedService.duration} min
-                  </span>
-                </div>
-                <div className="flex justify-between pt-4 border-t border-slate-200">
-                  <span className="text-lg font-medium text-slate-900">
-                    Total Price
-                  </span>
-                  <span className="text-lg font-bold text-cyan-700">
-                    ${selectedService.price}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Add Notes (Optional)
-                </label>
-                <textarea
-                  className="w-full rounded-md border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-cyan-500 focus:outline-none"
-                  rows={3}
-                  placeholder="Any special requests or details..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
-              </div>
-
-              <Button
-                fullWidth
-                size="lg"
-                onClick={handleConfirm}
-                isLoading={isSubmitting}
-              >
-                Confirm Booking
-              </Button>
-            </div>
-          )} */}
+          {step === 3 && data.service && (
+            <ConfirmBooking data={data} setData={setData} />
+          )}
         </div>
       </main>
     </BodyLayout>
