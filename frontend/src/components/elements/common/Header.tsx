@@ -20,8 +20,8 @@ const Header = () => {
     mutationFn: () => logoutUser(),
     onSuccess: (data) => {
       console.log(data);
-      navigate("/", { replace: true });
       setUser(null);
+      navigate("/", { replace: true });
     },
     onError: (err) => {
       console.log(err);

@@ -18,6 +18,7 @@ import OwnerAppointments from "./components/pages/owner/OwnerAppointments";
 import OwnerServices from "./components/pages/owner/OwnerServices";
 import CustomerBookNow from "./components/pages/customer/CustomerBookNow";
 import 'rc-slider/assets/index.css';
+import CustomerAppointments from "./components/pages/customer/CustomerAppointments";
 
 function App() {
   const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ function App() {
                   <Routes>
                     <Route path="/dashboard" element={<CustomerDashboard />} />
                     <Route path="/book-now" element={<CustomerBookNow />} />
+                    <Route path="/appointments" element={<CustomerAppointments />} />
                   </Routes>
                 </CustomerRoute>
               }

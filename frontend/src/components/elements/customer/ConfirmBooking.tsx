@@ -20,7 +20,7 @@ const ConfirmBooking = ({
     mutationFn: () => createAppointmentFunc(data),
     onSuccess: (data) => {
       console.log(data);
-      navigate("/customer/my-appointments");
+      navigate("/customer/appointments");
     },
     onError: (err: AxiosError) => {
       console.log(err);
@@ -52,7 +52,7 @@ const ConfirmBooking = ({
         <div className="flex justify-between">
           <span className="text-slate-600">Duration</span>
           <span className="font-semibold text-slate-900">
-            {convertEnumServiceDuration(data.service?.duration || "")} min
+            {convertEnumServiceDuration(data.service?.duration || "")}
           </span>
         </div>
         <div className="flex justify-between pt-4 border-t border-slate-200">

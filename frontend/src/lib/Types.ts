@@ -61,3 +61,13 @@ export type AppointmentData = {
   time: string;
   notes: string;
 };
+
+export type Appointment = {
+  id: number;
+  date: string;
+  time: string;
+  service: Service;
+  notes: string;
+  user_id: number;
+  status: string;
+};

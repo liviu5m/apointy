@@ -2,6 +2,9 @@ import React from "react";
 import DateSelector from "./DateSelector";
 import type { AppointmentData } from "@/lib/Types";
 import { TimeSlotSelector } from "./TimeSlotSelector";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { checkAvailabilityAppointment } from "@/api/appointment";
+import Loader from "../common/Loader";
 
 const TimeAndDatePicker = ({
   setStep,
@@ -12,8 +15,17 @@ const TimeAndDatePicker = ({
   setData: (e: AppointmentData) => void;
   data: AppointmentData;
 }) => {
-  return (
-    <div className="p-6">
+  const { data: appointments, isPending } = useQuery({
+    queryKey: ["check-availability-appointments", data.date],
+    queryFn: () =>
+      checkAvailabilityAppointment(data.service?.id || -1, data.date),
+    placeholderData: keepPreviousData,
+  });
+
+  return isPending ? (
+    <Loader />
+  ) : (
+    <div className={`p-6`}>
       <h2 className="text-xl font-semibold mb-6">Select Date & Time</h2>
 
       <div className="mb-8">
@@ -32,6 +44,7 @@ const TimeAndDatePicker = ({
             Available Time Slots
           </h3>
           <TimeSlotSelector
+            appointments={appointments}
             selectedTime={data.time}
             onSelect={(time) => setData({ ...data, time })}
             duration={data.service?.duration || ""}
