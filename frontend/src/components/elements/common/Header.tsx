@@ -42,7 +42,7 @@ const Header = () => {
     owner: [
       { label: "Dashboard", url: "/owner/dashboard" },
       { label: "Appointments", url: "/owner/appointments" },
-      { label: "Service", url: "/owner/services" },
+      { label: "Services", url: "/owner/services" },
     ],
   };
 

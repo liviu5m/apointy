@@ -16,11 +16,9 @@ import { AppointmentCard } from "@/components/elements/common/AppointmentCard";
 const OwnerAppointments = () => {
   const [status, setStatus] = useState("all");
   const { data: appointments, isPending } = useQuery({
-    queryKey: ["get-user-appointments", status],
+    queryKey: ["get-appointments", status],
     queryFn: () => getAppointmentByOwnerId(status),
   });
-
-  console.log(appointments);
 
   return isPending ? (
     <Loader />

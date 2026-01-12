@@ -25,7 +25,7 @@ const CustomerAppointments = () => {
     ? []
     : appointments.filter(
         (appointment: Appointment) =>
-          appointment.status == "CANCELED" || appointment.status == "COMPLETED"
+          appointment.status == "CANCELLED" || appointment.status == "COMPLETED"
       );
 
   return isPending ? (

@@ -1,12 +1,30 @@
+import { getAppointmentByUserId } from "@/api/appointment";
+import Loader from "@/components/elements/common/Loader";
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { useAppContext } from "@/lib/AppProvider";
+import type { Appointment } from "@/lib/Types";
+import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { ArrowRight, Calendar, Clock, Plus, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CustomerDashboard = () => {
   const { user } = useAppContext();
+  const { data: appointments, isPending } = useQuery({
+    queryKey: ["get-user-appointments"],
+    queryFn: () => getAppointmentByUserId(),
+  });
 
-  return (
+  const upcomingAppointment = isPending
+    ? []
+    : appointments.filter(
+        (appointment: Appointment) =>
+          appointment.status == "PENDING" || appointment.status == "CONFIRMED"
+      );
+
+  return isPending ? (
+    <Loader />
+  ) : (
     <BodyLayout>
       <div className="flex items-center justify-center">
         <div className="container py-16">
@@ -34,11 +52,10 @@ const CustomerDashboard = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">
-                    {1 ? "Today's Appointments" : "Upcoming Appointments"}
+                    Upcoming Appointments
                   </p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {/* {isBusiness ? todayCount : upcoming.length} */}
-                    {2}
+                    {upcomingAppointment.length}
                   </p>
                 </div>
               </div>
@@ -53,7 +70,14 @@ const CustomerDashboard = () => {
                   <p className="text-sm font-medium text-slate-500">
                     Pending Requests
                   </p>
-                  <p className="text-2xl font-bold text-slate-900">{2}</p>
+                  <p className="text-2xl font-bold text-slate-900">
+                    {
+                      appointments.filter(
+                        (apt: Appointment) =>
+                          apt.status.toLowerCase() == "pending"
+                      ).length
+                    }
+                  </p>
                 </div>
               </div>
             </div>
@@ -65,12 +89,10 @@ const CustomerDashboard = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-500">
-                    {/* {isBusiness ? "Active Services" : "Total Bookings"} */}
                     {"Total Bookings"}
                   </p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {/* {isBusiness ? services.length : appointments.length} */}
-                    {2}
+                    {appointments.length}
                   </p>
                 </div>
               </div>
@@ -79,11 +101,9 @@ const CustomerDashboard = () => {
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
               <h2 className="text-lg font-semibold text-slate-900">
-                {/* {isBusiness ? "Upcoming Schedule" : "Your Next Appointments"} */}
                 {"Upcoming Schedule"}
               </h2>
               <Link
-                // to={isBusiness ? "/appointments" : "/my-appointments"}
                 to={"/appointments"}
                 className="text-sm font-medium text-cyan-600 hover:text-cyan-700 flex items-center gap-1"
               >
@@ -91,55 +111,61 @@ const CustomerDashboard = () => {
               </Link>
             </div>
 
-            {/* <div className="divide-y divide-slate-100">
-              {upcoming.length > 0 ? (
-                upcoming.slice(0, 5).map((apt) => (
-                  <div
-                    key={apt.id}
-                    className="p-6 hover:bg-slate-50 transition-colors"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h3 className="font-medium text-slate-900">
-                          {apt.serviceName}
-                        </h3>
-                        <div className="flex items-center text-sm text-slate-500 mt-1 gap-4">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3.5 w-3.5" />
-                            {format(new Date(apt.date), "MMM d, yyyy")}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3.5 w-3.5" />
-                            {apt.startTime}
-                          </span>
-                        </div>
-                      </div>
+            {
+              <div className="divide-y divide-slate-100">
+                {upcomingAppointment.length > 0 ? (
+                  upcomingAppointment.slice(0, 5).map((apt: Appointment) => {
+                    const startTime = format(apt.date, "HH:mm");
+                    return (
                       <div
-                        className={`px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                        key={apt.id}
+                        className="p-6 hover:bg-slate-50 transition-colors"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="font-medium text-slate-900">
+                              {apt.service.name}
+                            </h3>
+                            <div className="flex items-center text-sm text-slate-500 mt-1 gap-4">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="h-3.5 w-3.5" />
+                                {format(new Date(apt.date), "MMM d, yyyy")}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3.5 w-3.5" />
+                                {startTime}
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            className={`px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
                       ${
-                        apt.status === "confirmed"
+                        apt.status.toLowerCase() === "confirmed"
                           ? "bg-emerald-100 text-emerald-800"
                           : "bg-amber-100 text-amber-800"
                       }`}
-                      >
-                        {apt.status}
+                          >
+                            {apt.status}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-12 text-center text-slate-500">
-                  <p>No upcoming appointments found.</p>
-                  {!isBusiness && (
-                    <Link to="/book" className="mt-4 inline-block">
-                      <Button size="sm" variant="outline">
-                        Book Now
-                      </Button>
+                    );
+                  })
+                ) : (
+                  <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+                    <p className="text-slate-500 mb-6">
+                      No upcoming appointments.
+                    </p>
+                    <Link
+                      to="/customer/book-now"
+                      className="px-5 py-3 bg-cyan-600 rounded-lg text-white hover:bg-cyan-700"
+                    >
+                      Book your first appointment
                     </Link>
-                  )}
-                </div>
-              )}
-            </div> */}
+                  </div>
+                )}
+              </div>
+            }
           </div>
         </div>
       </div>
