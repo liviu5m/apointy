@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/service")
-    public ResponseEntity<?> getAppointmentByOwnerId(@RequestHeader("X-User-Id") Long userId, @RequestParam String status) {
+    public ResponseEntity<?> getAppointmentByOwnerId(@RequestHeader("X-User-Id") Long userId, @RequestParam String status) throws IOException, GeneralSecurityException {
         List<Appointment> appointments = appointmentService.getAppointmentByOwnerId(userId, status);
         return ResponseEntity.ok(appointments);
     }
@@ -46,7 +48,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAppointment(@PathVariable Long id, @RequestBody AppointmentStatusDto appointmentStatusDto){
+    public ResponseEntity<?> updateAppointment(@PathVariable Long id, @RequestBody AppointmentStatusDto appointmentStatusDto) throws IOException {
         Appointment appointment = appointmentService.updateAppointment(id, appointmentStatusDto);
         return ResponseEntity.ok(appointment);
     }

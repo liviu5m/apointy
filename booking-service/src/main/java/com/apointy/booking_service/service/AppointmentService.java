@@ -7,7 +7,10 @@ import com.apointy.booking_service.models.Appointment;
 import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.repositories.AppointmentRepository;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +36,7 @@ public class AppointmentService {
         return appointments;
     }
 
-    public List<Appointment> getAppointmentByOwnerId(Long userId, String status) {
+    public List<Appointment> getAppointmentByOwnerId(Long userId, String status) throws IOException, GeneralSecurityException {
         List<Appointment> appointments = appointmentRepository.getAppointmentByOwnerId(userId, status.equals("all") ? null : AppointmentStatus.valueOf(status.toUpperCase()));
         return appointments;
     }
@@ -45,7 +48,7 @@ public class AppointmentService {
         return appointments;
     }
 
-    public Appointment updateAppointment(Long id, AppointmentStatusDto appointmentStatusDto) {
+    public Appointment updateAppointment(Long id, AppointmentStatusDto appointmentStatusDto) throws IOException {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Appointment not found"));
         appointment.setStatus(AppointmentStatus.valueOf(appointmentStatusDto.getStatus().toUpperCase()));
         return appointmentRepository.save(appointment);

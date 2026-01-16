@@ -71,3 +71,13 @@ export type Appointment = {
   user_id: number;
   status: string;
 };
+
+export type Business = {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+  description: string;
+  imageUrl: string;
+  user: User;
+};

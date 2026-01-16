@@ -1,9 +1,11 @@
+import { getBusiness } from "@/api/business";
 import {
   deleteService,
   getAllServices,
   getAllServicesByUserId,
 } from "@/api/service";
 import { getAllServiceCategories } from "@/api/serviceCategory";
+import BusinessDataForm from "@/components/elements/common/BusinessDataForm";
 import Loader from "@/components/elements/common/Loader";
 import { Modal } from "@/components/elements/common/Modal";
 import CreateNewServiceForm from "@/components/elements/owner/CreateNewServiceForm";
@@ -13,7 +15,7 @@ import { useAppContext } from "@/lib/AppProvider";
 import type { Service } from "@/lib/Types";
 import { convertEnumServiceDuration } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Clock, DollarSign, Edit2, Plus, Trash2 } from "lucide-react";
+import { Clock, DollarSign, Edit2, Plus, Settings, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -22,11 +24,17 @@ const OwnerServices = () => {
   const queryClient = useQueryClient();
   const { user } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(true);
   const [editService, setEditService] = useState<Service | null>(null);
 
   const { data: services, isPending } = useQuery({
     queryKey: ["owner-services"],
     queryFn: () => getAllServicesByUserId(),
+  });
+
+  const { data: business, isPending: isBusinessPending } = useQuery({
+    queryKey: ["get-business-data"],
+    queryFn: () => getBusiness(),
   });
 
   const handleDelete = (id: number) => {
@@ -64,7 +72,7 @@ const OwnerServices = () => {
     },
   });
 
-  return isPending || isCategoriesLoading ? (
+  return isPending || isCategoriesLoading || isBusinessPending ? (
     <Loader />
   ) : (
     <BodyLayout>
@@ -77,12 +85,20 @@ const OwnerServices = () => {
                 Manage the services you offer to customers.
               </h5>
             </div>
-            <button
-              className="px-5 py-3 rounded-lg text-white flex items-center justify-center bg-[#0891B2] gap-3 font-semibold cursor-pointer hover:bg-[#087f9c]"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <Plus className="w-5" /> <span>Add Service</span>
-            </button>
+            <div className="flex items-center gap-5">
+              <button
+                className="px-5 py-3 rounded-lg flex items-center justify-center gap-3 font-semibold cursor-pointer bg-white"
+                onClick={() => setIsBusinessModalOpen(true)}
+              >
+                <Settings className="w-5" /> <span>Update Business Data</span>
+              </button>
+              <button
+                className="px-5 py-3 rounded-lg text-white flex items-center justify-center bg-[#0891B2] gap-3 font-semibold cursor-pointer hover:bg-[#087f9c]"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Plus className="w-5" /> <span>Add Service</span>
+              </button>
+            </div>
           </div>
           <div className="mt-10">
             {services.length == 0 ? (
@@ -164,7 +180,10 @@ const OwnerServices = () => {
             onClose={() => setIsModalOpen(false)}
             title="Add New Service"
           >
-            <CreateNewServiceForm setIsModalOpen={setIsModalOpen} categories={categories} />
+            <CreateNewServiceForm
+              setIsModalOpen={setIsModalOpen}
+              categories={categories}
+            />
           </Modal>
         )}
         {editService && (
@@ -178,6 +197,15 @@ const OwnerServices = () => {
               editService={editService}
               categories={categories}
             />
+          </Modal>
+        )}
+        {isBusinessModalOpen && (
+          <Modal
+            isOpen={isBusinessModalOpen}
+            onClose={() => setIsBusinessModalOpen(false)}
+            title="Update Business Data"
+          >
+            <BusinessDataForm business={business} setIsBusinessModalOpen={setIsBusinessModalOpen} />
           </Modal>
         )}
       </div>

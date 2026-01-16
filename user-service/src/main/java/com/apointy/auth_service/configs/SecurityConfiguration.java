@@ -27,7 +27,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth->
-                        auth.requestMatchers("/auth/**", "/api/users/**").permitAll()
+                        auth.requestMatchers("/auth/**", "/api/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

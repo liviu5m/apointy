@@ -21,12 +21,14 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final Random random =  new Random();
     private final BrevoEmailService brevoEmailService;
+    private final BusinessService businessService;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BrevoEmailService brevoEmailService) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BrevoEmailService brevoEmailService, BusinessService businessService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.brevoEmailService = brevoEmailService;
+        this.businessService = businessService;
     }
 
     public User signup(RegisterUserDto input) {
@@ -34,6 +36,7 @@ public class AuthenticationService {
         Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
         if(optionalUser.isPresent()) throw new RuntimeException("User already exists");
         User user = new User(input.getFullName(), input.getEmail(), passwordEncoder.encode(input.getPassword()), UserRole.valueOf(input.getRole().toUpperCase()));
+        if(user.getRole() == UserRole.BUSINESS_OWNER) businessService.initiateBusiness(user);
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
         return userRepository.save(user);
@@ -112,6 +115,7 @@ public class AuthenticationService {
         if(user != null && user.getProvider().equals("credentials")) throw new RuntimeException("You can log in only using credentials to this account");
         if(user != null) return user;
         user = new User(name, email, passwordEncoder.encode("google"),  UserRole.valueOf(role.toUpperCase()));
+        if(user.getRole() == UserRole.BUSINESS_OWNER) businessService.initiateBusiness(user);
         user.setEnabled(true);
         user.setProvider("google");
         userRepository.save(user);

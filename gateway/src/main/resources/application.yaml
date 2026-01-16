@@ -11,12 +11,12 @@ spring:
           uri: http://localhost:8081
           #          uri: lb://user-service
           predicates:
-            - Path=/api/user/**,/auth/**
+            - Path=/api/user/**,/auth/**,/api/business/**,/api/cloudinary/**
         - id: booking-service
           uri: http://localhost:8082
           #          uri: lb://booking-service
           predicates:
-            - Path=/api/**
+            - Path=/api/service-category/**,/api/service/**,/api/appointment/**
   security:
     oauth2:
       client:

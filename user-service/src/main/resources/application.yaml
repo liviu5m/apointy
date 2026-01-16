@@ -17,6 +17,11 @@ brevo:
   api-key: ${BREVO_API_KEY}
   url: https://api.brevo.com/v3/smtp/email
 
+cloudinary:
+  cloud-name: "dtsx8irts"
+  api-key: "291516774448489"
+  api-secret: "vx4qXL_uxEpHp3ri1ITz6XYHeWY"
+
 server:
   port: 8081
 
