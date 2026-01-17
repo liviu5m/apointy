@@ -6,6 +6,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class UserService {
 
@@ -23,5 +26,9 @@ public class UserService {
     public User findById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         return user;
+    }
+
+    public List<User> getUsersBatch(List<Long> ids) {
+        return userRepository.findUsersByBatchIds(ids);
     }
 }

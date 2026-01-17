@@ -1,10 +1,11 @@
 import { updateBusinessFunc } from "@/api/business";
 import type { Business } from "@/lib/Types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type ChangeEvent } from "react";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
 import { User } from "lucide-react";
+import { uploadImage } from "@/api/cloudinary";
 
 const BusinessDataForm = ({
   business,
@@ -13,15 +14,33 @@ const BusinessDataForm = ({
   business: Business;
   setIsBusinessModalOpen: (e: boolean) => void;
 }) => {
-  const [data, setData] = useState<Business>(business);
+  const queryClient = useQueryClient();
+  const [data, setData] = useState<Business>({
+    ...business,
+  });
   const [selectedFile, setSelectedFile] = useState<File>();
   const [previewUrl, setPreviewUrl] = useState("");
 
   const { mutate: updateBusiness } = useMutation({
     mutationKey: ["update-business"],
-    mutationFn: () => updateBusinessFunc(data),
+    mutationFn: (imageUrl: string) => updateBusinessFunc(data, imageUrl),
     onSuccess: (data) => {
       console.log(data);
+      toast("Updated successfully");
+      setIsBusinessModalOpen(false);
+      queryClient.invalidateQueries({queryKey: ["owner-services"]})
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  const { mutate: uploadCloudinary } = useMutation({
+    mutationKey: ["upload-cloudinary"],
+    mutationFn: () => uploadImage(selectedFile),
+    onSuccess: (data) => {
+      console.log(data);
+      updateBusiness(data);
     },
     onError: (err) => {
       console.log(err);
@@ -51,9 +70,11 @@ const BusinessDataForm = ({
     <>
       <form
         className="space-y-4"
+        encType="multipart/form-data"
         onSubmit={(e) => {
           e.preventDefault();
-          updateBusiness();
+          if (selectedFile) uploadCloudinary();
+          else updateBusiness("");
         }}
       >
         <div>
@@ -95,7 +116,30 @@ const BusinessDataForm = ({
             onChange={(e) => setData({ ...data, description: e.target.value })}
           />
         </div>
-
+        <div className="items-center justify-center flex">
+          <label
+            htmlFor="profileImage"
+            className="px-5 items-center justify-center cursor-pointer"
+          >
+            <div className="aspect-square w-[200px] rounded-full flex items-center justify-center bg-gray-300 mb-5">
+              {data?.imageUrl || previewUrl ? (
+                <img
+                  src={previewUrl ? previewUrl : data.imageUrl}
+                  className="rounded-full w-full h-full aspect-square object-cover"
+                />
+              ) : (
+                <User />
+              )}
+            </div>
+            <input
+              type="file"
+              className="hidden"
+              id="profileImage"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e)}
+            />
+          </label>
+        </div>
         <div className="flex justify-end gap-3 pt-4">
           <button
             type="button"
@@ -109,34 +153,6 @@ const BusinessDataForm = ({
           </button>
         </div>
       </form>
-      <div>
-        <div className="w-30 h-30 rounded-full flex items-center justify-center bg-gray-300 mb-5">
-          {data?.imageUrl ? (
-            <img
-              src={previewUrl}
-              className="rounded-full w-full h-full object-cover"
-            />
-          ) : (
-            <User />
-          )}
-        </div>
-        <label htmlFor="profileImage" className="px-5">
-          <form encType="multipart/form-data">
-            <label htmlFor="profileImage">
-              <h2 className="w-full rounded-lg text-center font-semibold bg-gray-300 hover:bg-gray-200 py-3 mt-5 cursor-pointer px-5">
-                Change Profile Picture
-              </h2>
-              <input
-                type="file"
-                className="hidden"
-                id="profileImage"
-                accept="image/*"
-                onChange={(e) => handleFileChange(e)}
-              />
-            </label>
-          </form>
-        </label>
-      </div>
     </>
   );
 };

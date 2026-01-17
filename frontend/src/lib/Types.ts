@@ -47,6 +47,7 @@ export type Service = {
   description: string;
   available: boolean;
   createdAt: string;
+  businessDto: Business;
 };
 
 export type ServiceCategory = {
@@ -70,6 +71,7 @@ export type Appointment = {
   notes: string;
   user_id: number;
   status: string;
+  userDto: User;
 };
 
 export type Business = {

@@ -22,7 +22,7 @@ export function AppointmentCard({ appointment }: { appointment: Appointment }) {
   } as const;
   const formattedDate = format(
     parseISO(appointment.date),
-    "EEEE, MMMM d, yyyy"
+    "EEEE, MMMM d, yyyy",
   );
 
   const dateReference = parse(appointment.time, "HH:mm:ss", new Date());
@@ -70,7 +70,7 @@ export function AppointmentCard({ appointment }: { appointment: Appointment }) {
               {role === "business_owner" ? (
                 <>
                   <User className="h-3.5 w-3.5 mr-1.5" />
-                  <span>{appointment.user_id}</span>
+                  <span>{appointment.userDto.fullName}</span>
                 </>
               ) : (
                 <span className="text-slate-500">

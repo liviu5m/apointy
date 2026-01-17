@@ -1,13 +1,17 @@
 package com.apointy.booking_service.service;
 
 import com.apointy.booking_service.clients.UserClient;
+import com.apointy.booking_service.dtos.BusinessDto;
 import com.apointy.booking_service.dtos.PriceDto;
 import com.apointy.booking_service.dtos.ServiceDto;
 import com.apointy.booking_service.dtos.UserDto;
 import com.apointy.booking_service.enums.ServiceDuration;
+import com.apointy.booking_service.models.Appointment;
 import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.models.ServiceCategory;
 import com.apointy.booking_service.repositories.ServiceRepository;
+import com.apointy.booking_service.responses.AppointmentResponse;
+import com.apointy.booking_service.responses.ServiceResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 public class ServiceService {
@@ -35,9 +43,38 @@ public class ServiceService {
         return service;
     }
 
-    public Page<Service> getAllServices(String name, Long categoryId, ServiceDuration duration, Double minPrice, Double maxPrice, int page, int size) {
+    public Page<ServiceResponse> getAllServices(String name, Long categoryId, ServiceDuration duration, Double minPrice, Double maxPrice, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return serviceRepository.findServicesWithFilters(name, categoryId, duration, minPrice, maxPrice, pageable);
+
+        Page<Service> servicePage = serviceRepository.findServicesWithFilters(name, categoryId, duration, minPrice, maxPrice, pageable);
+
+        Set<Long> targetIds = servicePage.getContent().stream()
+                .map(Service::getUserId)
+                .collect(Collectors.toSet());
+
+        List<BusinessDto> businesses = getBusinessBatch(targetIds);
+
+        Map<Long, BusinessDto> businessMap = businesses.stream()
+                .collect(Collectors.toMap(
+                        business -> business.getUser().getId(),
+                        business -> business
+                ));
+
+        return servicePage.map(service -> {
+            BusinessDto businessDto = businessMap.get(service.getUserId());
+
+            return new ServiceResponse(
+                    service.getId(),
+                    service.getName(),
+                    service.getDuration(),
+                    service.getPrice(),
+                    service.getCategory(),
+                    service.getDescription(),
+                    service.getAvailable(),
+                    service.getCreatedAt(),
+                    businessDto
+            );
+        });
     }
 
     public Object[] getMaxMinPriceServices() {
@@ -50,8 +87,39 @@ public class ServiceService {
         return serviceRepository.save(service);
     }
 
-    public List<Service> getAllServiceByUserId(Long userId) {
-        return serviceRepository.findAllByUserIdWithCategories(userId);
+    public List<ServiceResponse> getAllServiceByUserId(Long userId) {
+        return formatServices(serviceRepository.findAllByUserIdWithCategories(userId));
+    }
+
+    public List<ServiceResponse> formatServices(List<Service> services) {
+        Set<Long> targetIds = services.stream()
+                .map(Service::getUserId)
+                .collect(Collectors.toSet());
+        List<BusinessDto> businesses = getBusinessBatch(targetIds);
+        for(BusinessDto data :  businesses) {
+            System.out.println(data);
+        }
+        Map<Long, BusinessDto> businessMap = businesses.stream()
+                .collect(Collectors.toMap(
+                        business -> business.getUser().getId(),
+                        business -> business
+                ));
+        System.out.println(businesses);
+        return services.stream().map(service -> {
+            BusinessDto businessDto = businessMap.get(service.getUserId());
+            ServiceResponse response = new ServiceResponse(
+                    service.getId(),
+                    service.getName(),
+                    service.getDuration(),
+                    service.getPrice(),
+                    service.getCategory(),
+                    service.getDescription(),
+                    service.getAvailable(),
+                    service.getCreatedAt(),
+                    businessDto
+            );
+            return response;
+        }).toList();
     }
 
     public Service updateService(ServiceDto serviceDto, Long serviceId) {
@@ -72,5 +140,15 @@ public class ServiceService {
     public UserDto getUserDetailsByEmail(Long id) {
         UserDto userDetails = userClient.getUserById(id);
         return userDetails;
+    }
+
+    public BusinessDto getBusinessDetails(Long id) {
+        BusinessDto businessDto = userClient.getBusinessByUserId(id);
+        return businessDto;
+    }
+
+    public List<BusinessDto> getBusinessBatch(Set<Long> ids) {
+        List<BusinessDto> businessDto = userClient.getBusinessBatch(ids);
+        return businessDto;
     }
 }

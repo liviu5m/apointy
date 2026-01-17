@@ -20,6 +20,9 @@ const OwnerAppointments = () => {
     queryFn: () => getAppointmentByOwnerId(status),
   });
 
+  console.log(appointments);
+  
+
   return isPending ? (
     <Loader />
   ) : (

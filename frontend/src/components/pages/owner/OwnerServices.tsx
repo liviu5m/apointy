@@ -15,7 +15,16 @@ import { useAppContext } from "@/lib/AppProvider";
 import type { Service } from "@/lib/Types";
 import { convertEnumServiceDuration } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Clock, DollarSign, Edit2, Plus, Settings, Trash2 } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Clock,
+  DollarSign,
+  Edit2,
+  Plus,
+  Settings,
+  Trash2,
+  User,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -24,7 +33,7 @@ const OwnerServices = () => {
   const queryClient = useQueryClient();
   const { user } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(true);
+  const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
   const [editService, setEditService] = useState<Service | null>(null);
 
   const { data: services, isPending } = useQuery({
@@ -36,6 +45,8 @@ const OwnerServices = () => {
     queryKey: ["get-business-data"],
     queryFn: () => getBusiness(),
   });
+
+  console.log(services);
 
   const handleDelete = (id: number) => {
     Swal.fire({
@@ -123,14 +134,43 @@ const OwnerServices = () => {
                     >
                       <div className="p-6">
                         <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="font-bold text-lg text-slate-900">
-                              {service.name}
-                            </h3>
-                            <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full mt-1">
-                              {service.category.name}
-                            </span>
+                          <div className="flex gap-4">
+                            <div className="h-16 w-16 flex-shrink-0">
+                              {service.businessDto?.imageUrl ? (
+                                <img
+                                  src={
+                                    service.businessDto.imageUrl ||
+                                    "/api/placeholder/64/64"
+                                  }
+                                  className="h-full w-full object-cover rounded-lg border border-gray-100"
+                                />
+                              ) : (
+                                <div className="h-full w-full object-cover rounded-lg border border-gray-100 flex items-center justify-center bg-gray-200">
+                                  <BriefcaseBusiness />
+                                </div>
+                              )}
+                            </div>
+
+                            <div>
+                              <h3 className="font-bold text-lg text-slate-900 leading-tight">
+                                {service.name}
+                              </h3>
+
+                              <div className="flex flex-wrap gap-2 mt-1.5">
+                                <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">
+                                  {service.category.name}
+                                </span>
+
+                                <span className="inline-flex items-center text-cyan-600 text-xs font-semibold">
+                                  <span className="w-1 h-1 bg-slate-300 rounded-full mx-1"></span>
+                                  {service.businessDto.name
+                                    ? service.businessDto.name
+                                    : "Business #" + service.businessDto.id}
+                                </span>
+                              </div>
+                            </div>
                           </div>
+
                           <div className="flex gap-2">
                             <button
                               className="p-1.5 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-md transition-colors cursor-pointer"
@@ -147,10 +187,12 @@ const OwnerServices = () => {
                           </div>
                         </div>
 
+                        {/* Description */}
                         <p className="text-slate-600 text-sm mb-6 line-clamp-2">
                           {service.description}
                         </p>
 
+                        {/* Footer Info */}
                         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                           <div className="flex items-center text-slate-600 text-sm">
                             <Clock className="h-4 w-4 mr-1.5 text-slate-400" />
@@ -162,8 +204,9 @@ const OwnerServices = () => {
                           </div>
                         </div>
                       </div>
+
                       {!service.available && (
-                        <div className="bg-slate-100 px-6 py-2 text-xs font-medium text-slate-500 text-center">
+                        <div className="bg-slate-100 px-6 py-2 text-xs font-medium text-slate-500 text-center rounded-b-lg">
                           Currently Unavailable
                         </div>
                       )}
@@ -205,7 +248,10 @@ const OwnerServices = () => {
             onClose={() => setIsBusinessModalOpen(false)}
             title="Update Business Data"
           >
-            <BusinessDataForm business={business} setIsBusinessModalOpen={setIsBusinessModalOpen} />
+            <BusinessDataForm
+              business={business}
+              setIsBusinessModalOpen={setIsBusinessModalOpen}
+            />
           </Modal>
         )}
       </div>

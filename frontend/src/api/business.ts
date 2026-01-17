@@ -10,9 +10,15 @@ export async function getBusiness() {
   return response.data;
 }
 
-export async function updateBusinessFunc(data: Business) {
-  const response = await axios.put(`${baseUrl}/api/business/${data.id}`, data, {
-    withCredentials: true,
-  });
+export async function updateBusinessFunc(data: Business, imageUrl: string) {
+  console.log(data, imageUrl);
+
+  const response = await axios.put(
+    `${baseUrl}/api/business/${data.id}`,
+    { ...data, imageUrl: imageUrl ? imageUrl : data.imageUrl },
+    {
+      withCredentials: true,
+    },
+  );
   return response.data;
 }

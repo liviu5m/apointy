@@ -5,6 +5,7 @@ import com.apointy.booking_service.dtos.ServiceDto;
 import com.apointy.booking_service.enums.ServiceDuration;
 import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.repositories.ServiceRepository;
+import com.apointy.booking_service.responses.ServiceResponse;
 import com.apointy.booking_service.service.ServiceService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -32,7 +33,7 @@ public class ServiceController {
                                             @RequestParam(required = false) Double maxPrice,
                                             @RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "10") int size) {
-        Page<Service> services = serviceService.getAllServices(name, categoryId, duration, minPrice, maxPrice, page, size);
+        Page<ServiceResponse> services = serviceService.getAllServices(name, categoryId, duration, minPrice, maxPrice, page, size);
         return ResponseEntity.ok(services);
     }
 
@@ -44,7 +45,7 @@ public class ServiceController {
 
     @GetMapping("/user-id")
     public ResponseEntity<?> getAllServicesByUserId(@RequestHeader("X-User-Id") Long userId) {
-        List<Service> services = serviceService.getAllServiceByUserId(userId);
+        List<ServiceResponse> services = serviceService.getAllServiceByUserId(userId);
         return ResponseEntity.ok(services);
     }
 

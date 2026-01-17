@@ -25,7 +25,7 @@ const CustomerBookNow = () => {
             onClick={() =>
               step > 1 ? setStep((step - 1) as any) : navigate("/dashboard")
             }
-            className="flex items-center text-sm text-slate-500 hover:text-slate-900 mb-4 transition-colors"
+            className="flex items-center text-sm text-slate-500 hover:text-slate-900 mb-4 transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4 mr-1" />
             {step === 1 ? "Back to Dashboard" : "Back"}

@@ -3,6 +3,7 @@ package com.apointy.booking_service.controllers;
 import com.apointy.booking_service.dtos.AppointmentDto;
 import com.apointy.booking_service.dtos.AppointmentStatusDto;
 import com.apointy.booking_service.models.Appointment;
+import com.apointy.booking_service.responses.AppointmentResponse;
 import com.apointy.booking_service.service.AppointmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class AppointmentController {
 
     @GetMapping("/service")
     public ResponseEntity<?> getAppointmentByOwnerId(@RequestHeader("X-User-Id") Long userId, @RequestParam String status) throws IOException, GeneralSecurityException {
-        List<Appointment> appointments = appointmentService.getAppointmentByOwnerId(userId, status);
+        List<AppointmentResponse> appointments = appointmentService.getAppointmentByOwnerId(userId, status);
         return ResponseEntity.ok(appointments);
     }
 

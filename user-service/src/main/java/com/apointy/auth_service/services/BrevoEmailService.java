@@ -63,6 +63,7 @@ public class BrevoEmailService {
     }
 
     public void sendRegistrationEmail(User user) {
+        System.out.println(user);
         String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"

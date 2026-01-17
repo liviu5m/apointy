@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { Clock, Search, X } from "lucide-react";
+import { BriefcaseBusiness, Clock, Search, X } from "lucide-react";
 import { getAllServiceCategories } from "@/api/serviceCategory";
 import type { AppointmentData, Service, ServiceCategory } from "@/lib/Types";
 import Loader from "@/components/elements/common/Loader";
@@ -49,6 +49,8 @@ const AppointmentServices = ({
     queryKey: ["service-prices"],
     queryFn: () => getPriceRange(),
   });
+
+  console.log(services);
 
   useEffect(() => {
     if (priceRange)
@@ -199,22 +201,47 @@ const AppointmentServices = ({
               setStep(2);
             }}
           >
-            <div>
-              <h3 className="font-semibold text-slate-900 group-hover:text-cyan-700 flex gap-3 items-center">
-                <span>{service.name}</span>
-                <span className="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full">
-                  {service.category.name}
-                </span>
-              </h3>
+            <div className="flex gap-5">
+              <div className="h-16 w-16 flex-shrink-0">
+                {service.businessDto?.imageUrl ? (
+                  <img
+                    src={
+                      service.businessDto.imageUrl || "/api/placeholder/64/64"
+                    }
+                    className="h-full w-full object-cover rounded-lg border border-gray-100"
+                  />
+                ) : (
+                  <div className="h-full w-full object-cover rounded-lg border border-gray-100 flex items-center justify-center bg-gray-200">
+                    <BriefcaseBusiness />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 group-hover:text-cyan-700 flex gap-3 items-center">
+                  <span>{service.name}</span>
+                  <div className="flex flex-wrap gap-2 mt-1.5">
+                    <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">
+                      {service.category.name}
+                    </span>
 
-              <p className="text-sm text-slate-500 mt-1">
-                {service.description}
-              </p>
-              <div className="flex items-center gap-4 mt-2 text-sm text-slate-600">
-                <span className="flex items-center">
-                  <Clock className="h-3.5 w-3.5 mr-1" />{" "}
-                  {convertEnumServiceDuration(service.duration)}
-                </span>
+                    <span className="inline-flex items-center text-cyan-600 text-xs font-semibold">
+                      <span className="w-1 h-1 bg-slate-300 rounded-full mx-1"></span>
+                      {service.businessDto.name
+                        ? service.businessDto.name
+                        : "Business #" + service.businessDto.id}
+                    </span>
+                  </div>
+                </h3>
+
+                <p className="text-sm text-slate-500 mt-1">
+                  {service.description}
+                </p>
+                <div className="flex items-center gap-4 mt-2 text-sm text-slate-600">
+                  <span className="flex items-center">
+                    <Clock className="h-3.5 w-3.5 mr-1" />{" "}
+                    {convertEnumServiceDuration(service.duration)}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="text-lg font-bold text-slate-900 group-hover:text-cyan-700">
