@@ -5,6 +5,8 @@ import com.apointy.auth_service.enums.UserRole;
 import com.apointy.auth_service.exceptions.UserDisabledException;
 import com.apointy.auth_service.models.User;
 import com.apointy.auth_service.repositories.UserRepository;
+import com.apointy.auth_service.request.VerificationNotificationRequest;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,15 +22,15 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final Random random =  new Random();
-    private final BrevoEmailService brevoEmailService;
     private final BusinessService businessService;
+    private final RabbitTemplate rabbitTemplate;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BrevoEmailService brevoEmailService, BusinessService businessService) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, BusinessService businessService, RabbitTemplate rabbitTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.brevoEmailService = brevoEmailService;
         this.businessService = businessService;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public User signup(RegisterUserDto input) {
@@ -71,16 +73,18 @@ public class AuthenticationService {
         User user = userRepository.findById(resendDto.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
-        brevoEmailService.sendRegistrationEmail(user);
         userRepository.save(user);
+        VerificationNotificationRequest request = new VerificationNotificationRequest(user.getEmail(), user.getFullName(), user.getPasswordVerificationCode());
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.email.user.account-verification", request);
     }
 
     public void sendResetPasswordEmail(PasswordEmailDto passwordEmailDto) {
         User user = userRepository.findByEmail(passwordEmailDto.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setPasswordVerificationCode(generateVerificationCode());
         user.setPasswordVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
-        brevoEmailService.sendResetPasswordEmail(user);
         userRepository.save(user);
+        VerificationNotificationRequest request = new VerificationNotificationRequest(user.getEmail(), user.getFullName(), user.getPasswordVerificationCode());
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.email.user.password-verification", request);
     }
 
     public void checkPasswordVerificationCode(PasswordCodeDto passwordCodeDto) {
@@ -97,8 +101,9 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(passwordCodeResendDto.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setPasswordVerificationCode(generateVerificationCode());
         user.setPasswordVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(5));
-        brevoEmailService.sendResetPasswordEmail(user);
         userRepository.save(user);
+        VerificationNotificationRequest request = new VerificationNotificationRequest(user.getEmail(), user.getFullName(), user.getVerificationCode());
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.email.user.password-verification", request);
     }
 
     public void resetPassword(PasswordResetDto passwordResetDto) {

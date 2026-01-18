@@ -51,6 +51,7 @@ export function AppointmentCard({ appointment }: { appointment: Appointment }) {
     onSuccess: (data) => {
       console.log(data);
       queryClient.invalidateQueries({ queryKey: ["get-user-appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["get-appointments"] });
     },
     onError: (err) => {
       console.log(err);

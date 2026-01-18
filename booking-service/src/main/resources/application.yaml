@@ -12,6 +12,11 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: root
+    password: root
 
 server:
   port: 8082
@@ -26,4 +31,4 @@ eureka:
 application:
   services:
     user:
-      url: "http://localhost:8081"
+      url: http://localhost:8081

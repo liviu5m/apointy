@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: notification-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: root
+    password: root
+
+brevo:
+  api-key: ${BREVO_API_KEY}
+  url: https://api.brevo.com/v3/smtp/email
+
+server:
+  port: 8083
+
+application:
+  services:
+    user:
+      url: http://localhost:8081

@@ -2,16 +2,15 @@ package com.apointy.auth_service.controllers;
 
 import com.apointy.auth_service.dtos.*;
 import com.apointy.auth_service.models.User;
+import com.apointy.auth_service.request.VerificationNotificationRequest;
 import com.apointy.auth_service.services.AuthenticationService;
-import com.apointy.auth_service.services.BrevoEmailService;
 import com.apointy.auth_service.services.JwtService;
 import com.apointy.auth_service.services.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,9 +23,9 @@ import java.util.Map;
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
-    private final BrevoEmailService brevoEmailService;
     private final UserService userService;
     private final RestTemplate restTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     @GetMapping
     public ResponseEntity<?> getUser(){
@@ -36,7 +35,8 @@ public class AuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
-        brevoEmailService.sendRegistrationEmail(registeredUser);
+        VerificationNotificationRequest request = new VerificationNotificationRequest(registeredUser.getEmail(), registeredUser.getFullName(), registeredUser.getVerificationCode());
+        rabbitTemplate.convertAndSend("notificationExchange", "notification.email.user.account-verification", request);
         return ResponseEntity.ok(registeredUser);
     }
 
