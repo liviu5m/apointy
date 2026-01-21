@@ -13,13 +13,13 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.service WHERE a.userId = :userId ORDER BY a.status")
+@Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.service WHERE a.userId = :userId ORDER BY a.date DESC, a.time ASC, a.status")
     List<Appointment> findAppointmentsByUserId(@Param("userId") Long userId);
 
-    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.service WHERE a.service.userId = :userId AND (:status IS NULL OR a.status = :status) ORDER BY a.status")
+    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.service WHERE a.service.userId = :userId AND (:status IS NULL OR a.status = :status) ORDER BY a.date DESC, a.time ASC, a.status")
     List<Appointment> getAppointmentByOwnerId(@Param("userId") Long userId, @Param("status") AppointmentStatus status);
 
-    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.service WHERE a.service.id = :serviceId AND a.date = :date")
+    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.service WHERE a.service.id = :serviceId AND a.date = :date ORDER BY a.time ASC")
     List<Appointment> findAppointmentsByServiceIdAndDate(@Param("serviceId") Long serviceId, @Param("date") LocalDate date);
 
 }

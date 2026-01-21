@@ -48,6 +48,7 @@ const TimeAndDatePicker = ({
             selectedTime={data.time}
             onSelect={(time) => setData({ ...data, time })}
             duration={data.service?.duration || ""}
+            date={data.date}
           />
         </div>
       )}

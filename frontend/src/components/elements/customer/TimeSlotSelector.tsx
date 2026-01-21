@@ -1,17 +1,26 @@
 import type { Appointment } from "@/lib/Types";
 import { convertEnumToMins } from "@/lib/utils";
-import { addMinutes, format, parseISO } from "date-fns";
+import {
+  addMinutes,
+  differenceInMinutes,
+  format,
+  isToday,
+  parse,
+  parseISO,
+} from "date-fns";
 
 export function TimeSlotSelector({
   selectedTime,
   onSelect,
   duration,
   appointments,
+  date,
 }: {
   selectedTime: string;
   onSelect: (time: string) => void;
   duration: string;
   appointments: Appointment[];
+  date: string;
 }) {
   const minutes = convertEnumToMins(duration);
   let startTime = new Date();
@@ -31,13 +40,24 @@ export function TimeSlotSelector({
       slots.push(format(startTime, "HH:mm"));
   }
 
+  const isValidTimeSlot = (timeString: string) => {
+    const selectedDate = parseISO(date);
+    if (!isToday(selectedDate)) return true;
+    const now = new Date();
+    const slotDate = parse(timeString, "HH:mm", new Date());
+    const minutesDifference = differenceInMinutes(slotDate, now);
+
+    return minutesDifference >= 60;
+  };
+
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
       {slots.map((time) => {
         const disabled = appointments.find(
           (appointment: Appointment) =>
-            appointment.time.split(":").slice(0, -1).join(":") == time
+            appointment.time.split(":").slice(0, -1).join(":") == time,
         );
+        const valid = isValidTimeSlot(time);
         return (
           <button
             key={time}
@@ -47,9 +67,11 @@ export function TimeSlotSelector({
             className={`py-2 cursor-pointer px-3 rounded-md text-sm font-medium border transition-all ${
               disabled
                 ? "bg-red-100 text-red-400 border-red-200 cursor-not-allowed"
-                : selectedTime === time
-                ? "border-cyan-600 bg-cyan-600 text-white shadow-sm"
-                : "border-slate-200 text-slate-700 hover:border-cyan-300 hover:bg-cyan-50"
+                : !valid
+                  ? "bg-gray-300 text-gray-400 cursor-not-allowed"
+                  : selectedTime === time
+                    ? "border-cyan-600 bg-cyan-600 text-white shadow-sm"
+                    : "border-slate-200 text-slate-700 hover:border-cyan-300 hover:bg-cyan-50"
             }`}
           >
             {time}

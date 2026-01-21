@@ -46,8 +46,6 @@ const OwnerServices = () => {
     queryFn: () => getBusiness(),
   });
 
-  console.log(services);
-
   const handleDelete = (id: number) => {
     Swal.fire({
       title: "Are you sure you want to delete this service?",
