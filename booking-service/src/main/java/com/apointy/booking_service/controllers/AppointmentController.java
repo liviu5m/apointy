@@ -30,6 +30,11 @@ public class AppointmentController {
         return ResponseEntity.ok(appointment);
     }
 
+    @GetMapping("/{id}/queue-position")
+    public ResponseEntity<?> getQueuePosition(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentService.getQueuePosition(id));
+    }
+
     @GetMapping
     public ResponseEntity<?> getAppointmentByUserId(@RequestHeader("X-User-Id") Long userId) {
         List<Appointment> appointments = appointmentService.findAppointmentsByUserId(userId);

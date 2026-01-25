@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateAppointmentFunc } from "@/api/appointment";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { convertEnumToMins } from "@/lib/utils";
 
 export function AppointmentCard({ appointment }: { appointment: Appointment }) {
   const queryClient = useQueryClient();
@@ -27,7 +28,10 @@ export function AppointmentCard({ appointment }: { appointment: Appointment }) {
 
   const dateReference = parse(appointment.time, "HH:mm:ss", new Date());
   const startTime = format(dateReference, "HH:mm");
-  const endTime = format(addMinutes(dateReference, 30), "HH:mm");
+  const endTime = format(
+    addMinutes(dateReference, convertEnumToMins(appointment.service.duration)),
+    "HH:mm",
+  );
 
   const handleUpdate = (status: string) => {
     Swal.fire({

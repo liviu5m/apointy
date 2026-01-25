@@ -25,7 +25,7 @@ const CustomerAppointments = () => {
     ? []
     : appointments.filter(
         (appointment: Appointment) =>
-          appointment.status == "CANCELLED" || appointment.status == "COMPLETED"
+          appointment.status == "CANCELLED" || appointment.status == "COMPLETED" || appointment.status == "NO_SHOW" || appointment.status == "EXPIRED" 
       );
 
   return isPending ? (
@@ -41,7 +41,7 @@ const CustomerAppointments = () => {
               <span>Book New</span>
             </Link>
           </div>
-          <div>
+          <div className="mb-10">
             <h4 className="my-5 text-lg font-semibold">Upcoming</h4>
             {upcomingAppointment.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

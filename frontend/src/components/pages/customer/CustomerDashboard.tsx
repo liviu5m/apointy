@@ -1,10 +1,21 @@
 import { getAppointmentByUserId } from "@/api/appointment";
 import Loader from "@/components/elements/common/Loader";
+import DashboardAppointmentCard from "@/components/elements/customer/DashboardAppointmentCard";
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { useAppContext } from "@/lib/AppProvider";
 import type { Appointment } from "@/lib/Types";
+import { convertEnumToMins } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import {
+  addMinutes,
+  format,
+  isAfter,
+  isBefore,
+  isToday,
+  parse,
+  parseISO,
+  startOfDay,
+} from "date-fns";
 import { ArrowRight, Calendar, Clock, Plus, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -17,10 +28,17 @@ const CustomerDashboard = () => {
 
   const upcomingAppointment = isPending
     ? []
-    : appointments.filter(
-        (appointment: Appointment) =>
-          appointment.status == "PENDING" || appointment.status == "CONFIRMED"
-      );
+    : appointments.filter((appointment: Appointment) => {
+        const apptDate = parseISO(appointment.date);
+        const today = startOfDay(new Date());
+
+        const isValidStatus = ["PENDING", "CONFIRMED"].includes(
+          appointment.status,
+        );
+        const isFutureOrToday = isToday(apptDate) || isAfter(apptDate, today);
+
+        return isValidStatus && isFutureOrToday;
+      });
 
   return isPending ? (
     <Loader />
@@ -39,9 +57,12 @@ const CustomerDashboard = () => {
               </h5>
             </div>
             <div>
-              <button className="px-5 py-3 rounded-lg text-white flex items-center justify-center bg-[#0891B2] gap-3 font-semibold cursor-pointer hover:bg-[#087f9c]">
+              <Link
+                to={"/customer/book-now"}
+                className="px-5 py-3 rounded-lg text-white flex items-center justify-center bg-[#0891B2] gap-3 font-semibold cursor-pointer hover:bg-[#087f9c]"
+              >
                 <Plus className="w-5" /> <span>Book Appointment</span>
-              </button>
+              </Link>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 mt-10">
@@ -74,7 +95,7 @@ const CustomerDashboard = () => {
                     {
                       appointments.filter(
                         (apt: Appointment) =>
-                          apt.status.toLowerCase() == "pending"
+                          apt.status.toLowerCase() == "pending",
                       ).length
                     }
                   </p>
@@ -104,7 +125,7 @@ const CustomerDashboard = () => {
                 {"Upcoming Schedule"}
               </h2>
               <Link
-                to={"/appointments"}
+                to={"/customer/appointments"}
                 className="text-sm font-medium text-cyan-600 hover:text-cyan-700 flex items-center gap-1"
               >
                 View all <ArrowRight className="h-4 w-4" />
@@ -114,43 +135,11 @@ const CustomerDashboard = () => {
             {
               <div className="divide-y divide-slate-100">
                 {upcomingAppointment.length > 0 ? (
-                  upcomingAppointment.slice(0, 5).map((apt: Appointment) => {
-                    const startTime = format(apt.date, "HH:mm");
-                    return (
-                      <div
-                        key={apt.id}
-                        className="p-6 hover:bg-slate-50 transition-colors"
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="font-medium text-slate-900">
-                              {apt.service.name}
-                            </h3>
-                            <div className="flex items-center text-sm text-slate-500 mt-1 gap-4">
-                              <span className="flex items-center gap-1">
-                                <Calendar className="h-3.5 w-3.5" />
-                                {format(new Date(apt.date), "MMM d, yyyy")}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="h-3.5 w-3.5" />
-                                {startTime}
-                              </span>
-                            </div>
-                          </div>
-                          <div
-                            className={`px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
-                      ${
-                        apt.status.toLowerCase() === "confirmed"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}
-                          >
-                            {apt.status}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
+                  upcomingAppointment
+                    .slice(0, 5)
+                    .map((apt: Appointment, i: number) => {
+                      return <DashboardAppointmentCard key={i} apt={apt} />;
+                    })
                 ) : (
                   <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
                     <p className="text-slate-500 mb-6">

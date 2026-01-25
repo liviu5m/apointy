@@ -1,6 +1,6 @@
 import { getAppointmentByOwnerId } from "@/api/appointment";
 import BodyLayout from "@/components/layouts/BodyLayout";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
   Select,
@@ -18,10 +18,8 @@ const OwnerAppointments = () => {
   const { data: appointments, isPending } = useQuery({
     queryKey: ["get-appointments", status],
     queryFn: () => getAppointmentByOwnerId(status),
+    placeholderData: keepPreviousData,
   });
-
-  console.log(appointments);
-  
 
   return isPending ? (
     <Loader />

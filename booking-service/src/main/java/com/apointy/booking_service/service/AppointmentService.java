@@ -9,11 +9,14 @@ import com.apointy.booking_service.repositories.AppointmentRepository;
 import com.apointy.booking_service.request.AppointmentNotificationUpdate;
 import com.apointy.booking_service.responses.AppointmentResponse;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,4 +100,20 @@ public class AppointmentService {
         return users;
     }
 
+    @Scheduled(cron = "0 0 * * * *")
+    public void processPastAppointments() {
+        LocalDateTime now = LocalDateTime.now();
+        List<Appointment> appointments = appointmentRepository.findExpiredAppointments(LocalDate.now(), LocalTime.now());
+
+        for (Appointment appt : appointments) {
+            appt.setStatus(AppointmentStatus.EXPIRED);
+            appointmentRepository.save(appt);
+        }
+    }
+
+    public int getQueuePosition(Long id) {
+        Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new RuntimeException("Appointment not found"));
+        int pos = appointmentRepository.getQueuePosition(appointment.getDate(), appointment.getService().getId(), appointment.getTime(), AppointmentStatus.CONFIRMED);
+        return pos;
+    }
 }

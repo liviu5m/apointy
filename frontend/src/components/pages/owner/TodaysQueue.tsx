@@ -27,7 +27,10 @@ const TodaysQueue = () => {
 
     const firstConfirmedIndex = todaysAppointments.findIndex(
       (app: Appointment) =>
-        app.status != "CANCELLED" && app.status != "COMPLETED",
+        app.status != "CANCELLED" &&
+        app.status != "COMPLETED" &&
+        app.status != "NO_SHOW" &&
+        app.status != "EXPIRED",
     );
 
     if (firstConfirmedIndex !== -1) {
@@ -43,21 +46,23 @@ const TodaysQueue = () => {
         <div className="container my-10">
           <h1 className="font-bold text-4xl">Today's Queue</h1>
           <h5 className="mt-2 text-gray-600">Manage today's appointment.</h5>
-          <div className="bg-white rounded-xl shadow px-8 py-5 mt-10 flex flex-col gap-5">
-            {todaysAppointments.map((appointment: Appointment, i: number) => {
-              return (
-                <QueueAppointmentCard
-                  key={appointment.id}
-                  index={i}
-                  appointment={appointment}
-                  currentAppointment={currentAppointment}
-                  setCurrentAppointment={setCurrentAppointment}
-                />
-              );
-            })}
-          </div>
+          {todaysAppointments.length > 0 && (
+            <div className="bg-white rounded-xl shadow px-8 py-5 mt-10 flex flex-col gap-5">
+              {todaysAppointments.map((appointment: Appointment, i: number) => {
+                return (
+                  <QueueAppointmentCard
+                    key={appointment.id}
+                    index={i}
+                    appointment={appointment}
+                    currentAppointment={currentAppointment}
+                    setCurrentAppointment={setCurrentAppointment}
+                  />
+                );
+              })}
+            </div>
+          )}
           {currentAppointment == todaysAppointments.length && (
-            <p className="text-center text-semibold mt-10">
+            <p className="text-center text-semibold mt-16">
               For a moment you've got no other appointments, make sure to check
               for new ones
             </p>

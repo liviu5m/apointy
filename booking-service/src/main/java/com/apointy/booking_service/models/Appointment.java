@@ -40,6 +40,8 @@ public class Appointment {
     @Column(nullable = false)
     private AppointmentStatus status;
 
+    private boolean reminderSent = false;
+
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
@@ -51,5 +53,20 @@ public class Appointment {
         this.time = time;
         this.notes = notes;
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", service=" + service +
+                ", userId=" + userId +
+                ", date=" + date +
+                ", time=" + time +
+                ", notes='" + notes + '\'' +
+                ", status=" + status +
+                ", reminderSent=" + reminderSent +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

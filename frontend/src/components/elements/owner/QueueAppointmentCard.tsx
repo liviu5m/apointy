@@ -73,6 +73,7 @@ export function QueueAppointmentCard({
     index == currentAppointment && appointment.status != "CANCELLED";
   const isPast = index < currentAppointment;
   const isPendingStatus = appointment.status === "PENDING";
+  console.log(appointment);
 
   return (
     <div
@@ -128,23 +129,48 @@ export function QueueAppointmentCard({
             <span className="text-red-400 text-sm italic font-medium">
               Cancelled
             </span>
+          ) : appointment.status == "NO_SHOW" ? (
+            <span className="text-gray-400 text-sm italic font-medium">
+              Didn't showed up
+            </span>
+          ) : appointment.status == "COMPLETED" ? (
+            <span className="text-green-400 text-sm italic font-medium">
+              Completed
+            </span>
           ) : isThisCurrentAppointment ? (
             isPendingStatus ? (
-              <button
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2.5 flex items-center gap-2 rounded-xl font-bold shadow-lg shadow-yellow-200 transition-all active:scale-95 cursor-pointer"
-                onClick={() => handleUpdate("confirmed")}
-              >
-                Approve
-                <Check className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2.5 flex items-center gap-2 rounded-xl font-bold shadow-lg shadow-yellow-200 transition-all active:scale-95 cursor-pointer"
+                  onClick={() => handleUpdate("confirmed")}
+                >
+                  Approve
+                  <Check className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => handleUpdate("cancelled")}
+                  className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors cursor-pointer"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             ) : (
-              <button
-                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 flex items-center gap-2 rounded-xl font-bold shadow-lg shadow-emerald-200 transition-all active:scale-95 cursor-pointer"
-                onClick={() => handleUpdate("completed")}
-              >
-                Next in Line
-                <ChevronRight className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  className="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2.5 flex items-center gap-2 rounded-xl font-bold shadow-lg shadow-gray-200 transition-all active:scale-95 cursor-pointer"
+                  onClick={() => handleUpdate("no_show")}
+                >
+                  Didn't showed up
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+                <button
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 flex items-center gap-2 rounded-xl font-bold shadow-lg shadow-emerald-200 transition-all active:scale-95 cursor-pointer"
+                  onClick={() => handleUpdate("completed")}
+                >
+                  Next in Line
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
             )
           ) : (
             !isPast && (
@@ -155,12 +181,6 @@ export function QueueAppointmentCard({
                 <X className="h-5 w-5" />
               </button>
             )
-          )}
-
-          {isPast && appointment.status != "CANCELLED" && (
-            <span className="text-green-400 text-sm italic font-medium">
-              Completed
-            </span>
           )}
         </div>
       </div>

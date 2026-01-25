@@ -4,9 +4,9 @@ import Loader from "@/components/elements/common/Loader";
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { useAppContext } from "@/lib/AppProvider";
 import type { Appointment } from "@/lib/Types";
-import { getUserRole } from "@/lib/utils";
+import { convertEnumToMins, getUserRole } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { addMinutes, format, parse } from "date-fns";
 import { ArrowRight, Calendar, Clock, Settings, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -26,7 +26,7 @@ const OwnerDashboard = () => {
     ? []
     : appointments.filter(
         (appointment: Appointment) =>
-          appointment.status == "PENDING" || appointment.status == "CONFIRMED"
+          appointment.status == "PENDING" || appointment.status == "CONFIRMED",
       );
   return isPending || isPendingServices ? (
     <Loader />
@@ -96,7 +96,7 @@ const OwnerDashboard = () => {
                     {
                       appointments.filter(
                         (apt: Appointment) =>
-                          apt.status.toLowerCase() == "pending"
+                          apt.status.toLowerCase() == "pending",
                       ).length
                     }
                   </p>
@@ -136,7 +136,15 @@ const OwnerDashboard = () => {
             <div className="divide-y divide-slate-100">
               {upcomingAppointment.length > 0 ? (
                 upcomingAppointment.slice(0, 5).map((apt: Appointment) => {
-                  const startTime = format(apt.date, "HH:mm");
+                  const dateReference = parse(apt.time, "HH:mm:ss", new Date());
+                  const startTime = format(dateReference, "HH:mm");
+                  const endTime = format(
+                    addMinutes(
+                      dateReference,
+                      convertEnumToMins(apt.service.duration),
+                    ),
+                    "HH:mm",
+                  );
                   return (
                     <div
                       key={apt.id}
@@ -154,7 +162,7 @@ const OwnerDashboard = () => {
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="h-3.5 w-3.5" />
-                              {startTime}
+                              {startTime} - {endTime}
                             </span>
                           </div>
                         </div>

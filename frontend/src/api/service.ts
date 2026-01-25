@@ -27,7 +27,7 @@ export async function getAllServicesByUserId() {
 export async function getAllServices(
   data: FilterData,
   page: number,
-  pageSize: number
+  pageSize: number,
 ) {
   const response = await axios.get(`${baseUrl}/api/service`, {
     params: {
@@ -54,7 +54,7 @@ export async function updateService(data: ServiceData, serviceId: number) {
     data,
     {
       withCredentials: true,
-    }
+    },
   );
   return response.data;
 }
@@ -70,5 +70,15 @@ export async function getPriceRange() {
   const response = await axios.get(`${baseUrl}/api/service/price`, {
     withCredentials: true,
   });
+  return response.data;
+}
+
+export async function getQueuePosition(id: number) {
+  const response = await axios.get(
+    `${baseUrl}/api/appointment/${id}/queue-position`,
+    {
+      withCredentials: true,
+    },
+  );
   return response.data;
 }

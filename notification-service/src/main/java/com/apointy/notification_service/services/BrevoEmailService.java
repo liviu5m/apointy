@@ -4,6 +4,7 @@ package com.apointy.notification_service.services;
 import com.apointy.notification_service.clients.UserClient;
 import com.apointy.notification_service.dtos.UserDto;
 import com.apointy.notification_service.request.AppointmentNotificationUpdate;
+import com.apointy.notification_service.request.AppointmentReminderRequest;
 import com.apointy.notification_service.request.VerificationNotificationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -153,6 +154,48 @@ public class BrevoEmailService {
                 + "</html>";
 
         sendEmail(request.getEmail(), request.getName(), htmlMessage, "Password Reset !");
+    }
+
+    public void sendAppointmentReminder(AppointmentReminderRequest request) {
+        UserDto userDto = userClient.getUserById(request.getUserId());
+
+        String htmlMessage = "<html>"
+                + "<body style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2d3748; margin: 0; padding: 0; background-color: #f7fafc;\">"
+                + "  <div style=\"padding: 40px 10px;\">"
+                + "    <div style=\"max-width: 500px; margin: auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);\">"
+                + "      "
+                + "      "
+                + "      <div style=\"background-color: #4c51bf; padding: 30px; text-align: center;\">"
+                + "        <h2 style=\"color: #ffffff; margin: 0; font-size: 22px;\">See you in 30 minutes!</h2>"
+                + "      </div>"
+                + "      "
+                + "      "
+                + "      <div style=\"padding: 30px; text-align: center;\">"
+                + "        <p style=\"font-size: 16px; color: #4a5568;\">Hi <strong>" + userDto.getFullName() + "</strong>,</p>"
+                + "        <p style=\"font-size: 16px; color: #4a5568;\">Your <strong>" + request.getServiceName() + "</strong> is coming up soon. Please confirm you're still joining us!</p>"
+                + "        "
+                + "        "
+                + "        <div style=\"margin: 25px 0; padding: 20px; background-color: #edf2f7; border-radius: 12px; text-align: left;\">"
+                + "          <div style=\"margin-bottom: 10px;\"><strong>📅 Date:</strong> " + request.getDate() + "</div>"
+                + "          <div style=\"margin-bottom: 10px;\"><strong>🕒 Time:</strong> " + request.getTime() + "</div>"
+                + "          <div><strong>📝 Notes:</strong> " + (request.getNotes() != null ? request.getNotes() : "N/A") + "</div>"
+                + "        </div>"
+                + "        "
+                + "        "
+                + "        "
+                + "        <p style=\"margin-top: 25px; font-size: 13px; color: #a0aec0;\">If you need to cancel, please call the business directly.</p>"
+                + "      </div>"
+                + "      "
+                + "      "
+                + "      <div style=\"background-color: #f7fafc; padding: 20px; text-align: center; font-size: 12px; color: #718096; border-top: 1px solid #e2e8f0;\">"
+                + "        &copy; 2026 Apointy Local Service Manager"
+                + "      </div>"
+                + "    </div>"
+                + "  </div>"
+                + "</body>"
+                + "</html>";
+
+        sendEmail(userDto.getEmail(), userDto.getFullName(), htmlMessage, "Appointment Reminder !");
     }
 
     public void sendEmail(String email, String fullName, String body, String subject) {

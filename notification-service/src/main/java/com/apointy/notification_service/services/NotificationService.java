@@ -2,6 +2,7 @@ package com.apointy.notification_service.services;
 
 import com.apointy.notification_service.configs.RabbitMQConfig;
 import com.apointy.notification_service.request.AppointmentNotificationUpdate;
+import com.apointy.notification_service.request.AppointmentReminderRequest;
 import com.apointy.notification_service.request.VerificationNotificationRequest;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
@@ -29,6 +30,11 @@ public class NotificationService {
         System.out.println(routingKey);
         if(routingKey.equals(RabbitMQConfig.ACCOUNT_VERIFICATION_RK)) emailService.sendUserAccountEmailVerificationNotification(request);
         else if(routingKey.equals(RabbitMQConfig.PASSWORD_VERIFICATION_RK)) emailService.sendUserPasswordEmailVerificationNotification(request);
+    }
+
+    @RabbitListener(queues = "reminderQueue")
+    public void handleAppointmentQueue(AppointmentReminderRequest request, @Header(AmqpHeaders.RECEIVED_ROUTING_KEY) String routingKey) {
+        if(routingKey.equals(RabbitMQConfig.APPOINTMENT_REMINDER_RK)) emailService.sendAppointmentReminder(request);
     }
 
 }

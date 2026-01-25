@@ -22,6 +22,7 @@ export function TimeSlotSelector({
   appointments: Appointment[];
   date: string;
 }) {
+  const BREAK_TIME = 10;
   const minutes = convertEnumToMins(duration);
   let startTime = new Date();
   const endTime = new Date();
@@ -32,10 +33,11 @@ export function TimeSlotSelector({
   lunchStart.setHours(12, 0, 0, 0);
   lunchEnd.setHours(13, 0, 0, 0);
 
-  let slots: string[] = [];
+  let slots: string[] = [format(startTime, "HH:mm")];
 
-  while (startTime < endTime) {
-    startTime = addMinutes(startTime, minutes);
+  while (1) {
+    startTime = addMinutes(startTime, minutes + BREAK_TIME);
+    if(startTime > endTime) break;
     if (!(startTime > lunchStart && startTime < lunchEnd))
       slots.push(format(startTime, "HH:mm"));
   }
