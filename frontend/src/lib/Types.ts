@@ -83,3 +83,12 @@ export type Business = {
   imageUrl: string;
   user: User;
 };
+
+export type BusinessHolidayData = {
+  type: string;
+  reason: string;
+  startTime: string;
+  endTime: string;
+  date: undefined | Date;
+  daysRecurring: boolean[];
+};

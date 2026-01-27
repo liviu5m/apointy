@@ -8,6 +8,7 @@ import { getAllServiceCategories } from "@/api/serviceCategory";
 import BusinessDataForm from "@/components/elements/common/BusinessDataForm";
 import Loader from "@/components/elements/common/Loader";
 import { Modal } from "@/components/elements/common/Modal";
+import BusinessHolidayModal from "@/components/elements/owner/BusinessHolidayModal";
 import CreateNewServiceForm from "@/components/elements/owner/CreateNewServiceForm";
 import UpdateServiceForm from "@/components/elements/owner/UpdateServiceForm";
 import BodyLayout from "@/components/layouts/BodyLayout";
@@ -34,6 +35,7 @@ const OwnerServices = () => {
   const { user } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
+  const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(-1);
   const [editService, setEditService] = useState<Service | null>(null);
 
   const { data: services, isPending } = useQuery({
@@ -168,7 +170,6 @@ const OwnerServices = () => {
                               </div>
                             </div>
                           </div>
-
                           <div className="flex gap-2">
                             <button
                               className="p-1.5 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-md transition-colors cursor-pointer"
@@ -185,10 +186,17 @@ const OwnerServices = () => {
                           </div>
                         </div>
 
-                        {/* Description */}
-                        <p className="text-slate-600 text-sm mb-6 line-clamp-2">
-                          {service.description}
-                        </p>
+                        <div className="flex justify-between">
+                          <p className="text-slate-600 text-sm mb-6 line-clamp-2">
+                            {service.description}
+                          </p>
+                          <button
+                            className="text-sm px-4 py-2 rounded-lg shadow bg-gray-200 mb-5 cursor-pointer hover:bg-gray-100"
+                            onClick={() => setIsHolidayModalOpen(service.id)}
+                          >
+                            Business Holiday
+                          </button>
+                        </div>
 
                         {/* Footer Info */}
                         <div className="flex items-center justify-between pt-4 border-t border-slate-100">
@@ -249,6 +257,18 @@ const OwnerServices = () => {
             <BusinessDataForm
               business={business}
               setIsBusinessModalOpen={setIsBusinessModalOpen}
+            />
+          </Modal>
+        )}
+        {isHolidayModalOpen != -1 && (
+          <Modal
+            isOpen={isHolidayModalOpen != -1}
+            onClose={() => setIsHolidayModalOpen(-1)}
+            title="Business Holidays"
+          >
+            <BusinessHolidayModal
+              serviceId={isHolidayModalOpen}
+              setIsHolidayModalOpen={setIsHolidayModalOpen}
             />
           </Modal>
         )}

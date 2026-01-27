@@ -37,6 +37,7 @@ public class Appointment {
     @Column(length = 1000)
     private String notes;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AppointmentStatus status;
 

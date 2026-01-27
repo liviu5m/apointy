@@ -16,7 +16,7 @@ spring:
           uri: http://localhost:8082
           #          uri: lb://booking-service
           predicates:
-            - Path=/api/service-category/**,/api/service/**,/api/appointment/**
+            - Path=/api/service-category/**,/api/service/**,/api/appointment/**,/api/business-holiday/**
   security:
     oauth2:
       client:

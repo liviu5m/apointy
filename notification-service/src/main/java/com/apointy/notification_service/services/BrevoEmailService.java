@@ -159,7 +159,7 @@ public class BrevoEmailService {
     public void sendAppointmentReminder(AppointmentReminderRequest request) {
         UserDto userDto = userClient.getUserById(request.getUserId());
 
-        String htmlMessage = "<html>"
+        String htmlMessage =  "<html>"
                 + "<body style=\"font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #2d3748; margin: 0; padding: 0; background-color: #f7fafc;\">"
                 + "  <div style=\"padding: 40px 10px;\">"
                 + "    <div style=\"max-width: 500px; margin: auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);\">"
@@ -194,7 +194,6 @@ public class BrevoEmailService {
                 + "  </div>"
                 + "</body>"
                 + "</html>";
-
         sendEmail(userDto.getEmail(), userDto.getFullName(), htmlMessage, "Appointment Reminder !");
     }
 

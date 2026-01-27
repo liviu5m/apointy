@@ -8,6 +8,7 @@ import com.apointy.booking_service.models.Service;
 import com.apointy.booking_service.repositories.AppointmentRepository;
 import com.apointy.booking_service.request.AppointmentNotificationUpdate;
 import com.apointy.booking_service.responses.AppointmentResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -99,8 +100,8 @@ public class AppointmentService {
         List<UserDto> users = userClient.getAllUsersById(ids);
         return users;
     }
-
-    @Scheduled(cron = "0 0 * * * *")
+    @Transactional
+    @Scheduled(fixedRate = 3600000)
     public void processPastAppointments() {
         LocalDateTime now = LocalDateTime.now();
         List<Appointment> appointments = appointmentRepository.findExpiredAppointments(LocalDate.now(), LocalTime.now());

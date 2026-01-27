@@ -18,3 +18,4 @@ application:
   services:
     user:
       url: http://localhost:8081
+
