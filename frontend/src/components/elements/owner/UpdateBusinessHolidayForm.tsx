@@ -1,8 +1,8 @@
-import { createBusinessHoliday } from "@/api/holiday";
+import { createBusinessHoliday, updateBusinessHoliday } from "@/api/holiday";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
-import type { BusinessHolidayData } from "@/lib/Types";
+import type { BusinessHolidayData, Holiday } from "@/lib/Types";
 import {
   Popover,
   PopoverContent,
@@ -20,32 +20,36 @@ import {
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
-const CreateBusinessHolidayForm = ({
+const UpdateBusinessHolidayForm = ({
   serviceId,
   onClose,
+  holiday,
 }: {
   serviceId: number;
   onClose: () => void;
+  holiday: Holiday;
 }) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const [data, setData] = useState<BusinessHolidayData>({
-    type: "",
-    reason: "",
-    startTime: "10:30:00",
-    endTime: "11:30:00",
-    date: undefined,
-    daysRecurring: [false, false, false, false, false, false, false],
+    type: holiday.type,
+    reason: holiday.reason,
+    startTime: holiday.startTime,
+    endTime: holiday.endTime,
+    date: holiday.date,
+    daysRecurring: holiday.daysRecurring
+      .split("")
+      .map((el: string) => (el == "1" ? true : false)),
   });
 
   const days = ["M", "T", "W", "T", "F", "S", "S"];
 
-  const { mutate: createHoliday } = useMutation({
-    mutationKey: ["create-holiday", serviceId],
-    mutationFn: () => createBusinessHoliday(data, serviceId),
+  const { mutate: updateHoliday } = useMutation({
+    mutationKey: ["update-holiday", serviceId],
+    mutationFn: () => updateBusinessHoliday(data, serviceId, holiday.id),
     onSuccess: (data) => {
       console.log(data);
-      toast("Successfully added holiday");
+      toast("Successfully updated holiday");
       queryClient.invalidateQueries({
         queryKey: ["business-holidays", serviceId],
       });
@@ -81,7 +85,7 @@ const CreateBusinessHolidayForm = ({
           e.preventDefault();
           if (data.type == "SPECIFIC_DATE" && data.date)
             toast("Date is required");
-          createHoliday();
+          updateHoliday();
         }}
       >
         <div className="flex flex-col">
@@ -203,7 +207,6 @@ const CreateBusinessHolidayForm = ({
                 </label>
                 <Input
                   type="time"
-                  
                   id="time-picker-optional"
                   step="1"
                   className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
@@ -249,7 +252,7 @@ const CreateBusinessHolidayForm = ({
               className="w-full px-5 py-3 shadow text-white bg-[#0891B2] font-semibold rounded-lg cursor-pointer hover:bg-[#077c99] active:scale-95"
               type="submit"
             >
-              Create
+              Update
             </button>
           </>
         )}
@@ -258,4 +261,4 @@ const CreateBusinessHolidayForm = ({
   );
 };
 
-export default CreateBusinessHolidayForm;
+export default UpdateBusinessHolidayForm;

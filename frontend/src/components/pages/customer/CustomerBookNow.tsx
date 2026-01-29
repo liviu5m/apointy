@@ -6,12 +6,13 @@ import AppointmentServices from "../../elements/customer/AppointmentServices";
 import type { AppointmentData } from "@/lib/Types";
 import TimeAndDatePicker from "@/components/elements/customer/TimeAndDatePicker";
 import ConfirmBooking from "@/components/elements/customer/ConfirmBooking";
+import { format } from "date-fns";
 
 const CustomerBookNow = () => {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<AppointmentData>({
     service: null,
-    date: "",
+    date: format(new Date(), "yyyy-MM-dd"),
     time: "",
     notes: "",
   });

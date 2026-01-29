@@ -4,6 +4,7 @@ import {
   addMinutes,
   differenceInMinutes,
   format,
+  isBefore,
   isToday,
   parse,
   parseISO,
@@ -37,19 +38,20 @@ export function TimeSlotSelector({
 
   while (1) {
     startTime = addMinutes(startTime, minutes + BREAK_TIME);
-    if(startTime > endTime) break;
+    if (startTime > endTime) break;
     if (!(startTime > lunchStart && startTime < lunchEnd))
       slots.push(format(startTime, "HH:mm"));
   }
 
   const isValidTimeSlot = (timeString: string) => {
-    const selectedDate = parseISO(date);
-    if (!isToday(selectedDate)) return true;
+    const slotDate = parse(
+      `${date} ${timeString}`,
+      "yyyy-MM-dd HH:mm",
+      new Date(),
+    );
     const now = new Date();
-    const slotDate = parse(timeString, "HH:mm", new Date());
-    const minutesDifference = differenceInMinutes(slotDate, now);
 
-    return minutesDifference >= 60;
+    return differenceInMinutes(slotDate, now) >= 60;
   };
 
   return (

@@ -92,3 +92,15 @@ export type BusinessHolidayData = {
   date: undefined | Date;
   daysRecurring: boolean[];
 };
+
+export type Holiday = {
+  id: number;
+  type: string;
+  reason: string;
+  startTime: string;
+  endTime: string;
+  date: string;
+  daysRecurring: string;
+  createdAt: string;
+  service: Service;
+};
