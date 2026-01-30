@@ -94,6 +94,7 @@ const TimeAndDatePicker = ({
             onSelect={(time) => setData({ ...data, time })}
             duration={data.service?.duration || ""}
             date={data.date}
+            holidays={holidays}
           />
         </div>
       )}
