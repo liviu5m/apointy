@@ -2,10 +2,13 @@ spring:
   application:
     name: notification-service
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: root
-    password: root
+    host: ${RABBIT_MQ_HOST}
+    port: ${RABBIT_MQ_PORT}
+    username: ${RABBIT_MQ_USERNAME}
+    password: ${RABBIT_MQ_PASSWORD}
+    virtual-host: ${RABBIT_MQ_USERNAME}
+    ssl:
+      enabled: false
 
 brevo:
   api-key: ${BREVO_API_KEY}

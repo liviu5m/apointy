@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -41,13 +42,19 @@ public class Service {
     private String description;
 
     @Column(nullable = false)
+    private LocalTime startTime;
+
+    @Column(nullable = false)
+    private LocalTime endTime;
+
+    @Column(nullable = false)
     private Boolean available;
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
 
-    public Service(Long userId, String name, ServiceDuration duration, Double price, ServiceCategory category, String description, Boolean available) {
+    public Service(Long userId, String name, ServiceDuration duration, Double price, ServiceCategory category, String description, Boolean available, LocalTime startTime, LocalTime endTime) {
         this.userId = userId;
         this.name = name;
         this.duration = duration;
@@ -55,6 +62,8 @@ public class Service {
         this.category = category;
         this.description = description;
         this.available = available;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public Service() {

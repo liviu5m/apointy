@@ -29,11 +29,7 @@ const Header = () => {
   });
 
   const routes = {
-    default: [
-      { label: "Home", url: "/" },
-      { label: "Features", url: "/features" },
-      { label: "Contact", url: "/contact" },
-    ],
+    default: [],
     customer: [
       { label: "Dashboard", url: "/customer/dashboard" },
       { label: "Book Now", url: "/customer/book-now" },

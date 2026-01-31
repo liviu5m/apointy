@@ -6,6 +6,7 @@ import com.apointy.booking_service.models.ServiceCategory;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalTime;
 import java.util.Date;
 
 @Getter
@@ -21,8 +22,10 @@ public class ServiceResponse {
     private Boolean available;
     private Date createdAt;
     private BusinessDto businessDto;
+    private LocalTime startTime;
+    private LocalTime endTime;
 
-    public ServiceResponse(Long id, String name, ServiceDuration duration, Double price, ServiceCategory category, String description, Boolean available, Date createdAt, BusinessDto businessDto) {
+    public ServiceResponse(Long id, String name, ServiceDuration duration, Double price, ServiceCategory category, String description, Boolean available, Date createdAt, BusinessDto businessDto, LocalTime startTime, LocalTime endTime) {
         this.id = id;
         this.name = name;
         this.duration = duration;
@@ -32,5 +35,7 @@ public class ServiceResponse {
         this.available = available;
         this.createdAt = createdAt;
         this.businessDto = businessDto;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }

@@ -28,7 +28,6 @@ public class ReminderService {
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void sendReminders() {
-        System.out.println("Halooo reminder");
         LocalTime windowStart = LocalTime.now();
         LocalTime windowEnd = LocalTime.now().plusMinutes(60);
 

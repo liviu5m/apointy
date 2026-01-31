@@ -1,4 +1,5 @@
 import { createServiceFunc } from "@/api/service";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -27,6 +28,8 @@ const CreateNewServiceForm = ({
     categoryId: "",
     description: "",
     available: false,
+    startTime: "09:00:00",
+    endTime: "17:00:00",
   });
 
   const { mutate: createService } = useMutation({
@@ -44,14 +47,14 @@ const CreateNewServiceForm = ({
           toast.error(error.response?.data as string);
         } else {
           const errorMessages = Object.entries(error.response.data).map(
-            ([field, message]) => <p key={field}>{message}</p>
+            ([field, message]) => <p key={field}>{message}</p>,
           );
 
           toast.error(
             <div>
               <strong>Validation errors:</strong>
               {errorMessages}
-            </div>
+            </div>,
           );
         }
       } else {
@@ -129,6 +132,34 @@ const CreateNewServiceForm = ({
             })}
           </SelectContent>
         </Select>
+      </div>
+      <div className="flex items-center gap-5">
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-slate-700 mb-2">
+            Start Time
+          </label>
+          <Input
+            type="time"
+            id="time-picker-optional"
+            step="1"
+            className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+            value={data.startTime}
+            onChange={(e) => setData({ ...data, startTime: e.target.value })}
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-slate-700 mb-2">
+            End Time
+          </label>
+          <Input
+            type="time"
+            id="time-picker-optional"
+            step="1"
+            className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+            value={data.endTime}
+            onChange={(e) => setData({ ...data, endTime: e.target.value })}
+          />
+        </div>
       </div>
       <div className="space-y-2">
         <h4 className="text-sm font-semibold mb-2">Description</h4>

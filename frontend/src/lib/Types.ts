@@ -36,6 +36,8 @@ export type ServiceData = {
   categoryId: string;
   description: string;
   available: boolean;
+  startTime: string;
+  endTime: string;
 };
 
 export type Service = {
@@ -48,6 +50,8 @@ export type Service = {
   available: boolean;
   createdAt: string;
   businessDto: Business;
+  startTime: string;
+  endTime: string;
 };
 
 export type ServiceCategory = {

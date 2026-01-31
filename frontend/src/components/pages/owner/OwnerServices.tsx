@@ -16,6 +16,7 @@ import { useAppContext } from "@/lib/AppProvider";
 import type { Service } from "@/lib/Types";
 import { convertEnumServiceDuration } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { format, parse, parseISO } from "date-fns";
 import {
   BriefcaseBusiness,
   Clock,
@@ -127,6 +128,8 @@ const OwnerServices = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {services.map((service: Service, i: number) => {
+                  console.log(service);
+
                   return (
                     <div
                       className="bg-white rounded-lg shadow border border-gray-200"
@@ -152,9 +155,30 @@ const OwnerServices = () => {
                             </div>
 
                             <div>
-                              <h3 className="font-bold text-lg text-slate-900 leading-tight">
-                                {service.name}
-                              </h3>
+                              <div className="flex items-center gap-5">
+                                <h3 className="font-bold text-lg text-slate-900 leading-tight">
+                                  {service.name}
+                                </h3>
+                                <h4 className="font-bold text-sm text-gray-600 leading-tight">
+                                  {format(
+                                    parse(
+                                      service.startTime,
+                                      "HH:mm:ss",
+                                      new Date(),
+                                    ),
+                                    "HH:mm",
+                                  ) +
+                                    "-" +
+                                    format(
+                                      parse(
+                                        service.endTime,
+                                        "HH:mm:ss",
+                                        new Date(),
+                                      ),
+                                      "HH:mm",
+                                    )}
+                                </h4>
+                              </div>
 
                               <div className="flex flex-wrap gap-2 mt-1.5">
                                 <span className="inline-block px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded-full font-medium">

@@ -83,7 +83,7 @@ const TimeAndDatePicker = ({
         />
       </div>
 
-      {data.date && (
+      {data.date && data.service && (
         <div className="mb-8 animate-in fade-in slide-in-from-top-4">
           <h3 className="text-sm font-medium text-slate-700 mb-3">
             Available Time Slots
@@ -95,6 +95,7 @@ const TimeAndDatePicker = ({
             duration={data.service?.duration || ""}
             date={data.date}
             holidays={holidays}
+            service={data.service}
           />
         </div>
       )}

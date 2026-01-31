@@ -72,7 +72,9 @@ public class ServiceService {
                     service.getDescription(),
                     service.getAvailable(),
                     service.getCreatedAt(),
-                    businessDto
+                    businessDto,
+                    service.getStartTime(),
+                    service.getEndTime()
             );
         });
     }
@@ -83,7 +85,7 @@ public class ServiceService {
 
     public Service createService(ServiceDto serviceDto, Long userId) {
         ServiceCategory category = serviceCategoryService.getCategoryById(serviceDto.getCategoryId());
-        Service service = new Service(userId, serviceDto.getName(), ServiceDuration.valueOf(serviceDto.getDuration()), serviceDto.getPrice() , category, serviceDto.getDescription(), serviceDto.getAvailable());
+        Service service = new Service(userId, serviceDto.getName(), ServiceDuration.valueOf(serviceDto.getDuration()), serviceDto.getPrice() , category, serviceDto.getDescription(), serviceDto.getAvailable(), serviceDto.getStartTime(), serviceDto.getEndTime());
         return serviceRepository.save(service);
     }
 
@@ -104,7 +106,6 @@ public class ServiceService {
                         business -> business.getUser().getId(),
                         business -> business
                 ));
-        System.out.println(businesses);
         return services.stream().map(service -> {
             BusinessDto businessDto = businessMap.get(service.getUserId());
             ServiceResponse response = new ServiceResponse(
@@ -116,7 +117,9 @@ public class ServiceService {
                     service.getDescription(),
                     service.getAvailable(),
                     service.getCreatedAt(),
-                    businessDto
+                    businessDto,
+                    service.getStartTime(),
+                    service.getEndTime()
             );
             return response;
         }).toList();
@@ -130,6 +133,8 @@ public class ServiceService {
         service.setPrice(serviceDto.getPrice());
         service.setCategory(category);
         service.setAvailable(serviceDto.getAvailable());
+        service.setStartTime(serviceDto.getStartTime());
+        service.setEndTime(serviceDto.getEndTime());
         return serviceRepository.save(service);
     }
 

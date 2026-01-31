@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalTime;
+
 @Getter
 public class ServiceDto {
 
@@ -18,6 +20,10 @@ public class ServiceDto {
     private Long categoryId;
     @NotBlank(message = "Description is required")
     private String description;
+    @NotNull(message = "Start time is required")
+    private LocalTime startTime;
+    @NotNull(message = "End time is required")
+    private LocalTime endTime;
     private Boolean available;
 
 }

@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String STATUS_UPDATE_RK = "notification.email.updated";
-    public static final String APPOINTMENT_CREATED_RK = "notification.email.created";
+    public static final String STATUS_UPDATE_RK = "notification.email.appointment.updated";
+    public static final String APPOINTMENT_CREATED_RK = "notification.email.appointment.created";
     public static final String ACCOUNT_VERIFICATION_RK = "notification.email.user.account-verification";
     public static final String PASSWORD_VERIFICATION_RK = "notification.email.user.password-verification";
     public static final String APPOINTMENT_REMINDER_RK = "notification.sms.appointment.reminder";

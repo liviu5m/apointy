@@ -33,9 +33,7 @@ public class BrevoEmailService {
 
     public void sendCreationEmailNotification(AppointmentNotificationUpdate request) {
         String pendingColor = "#ffc107";
-
         UserDto userDto = userClient.getUserById(request.getUserId());
-
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; margin: 0; padding: 0;\">"
                 + "<div style=\"background-color: #f4f4f4; padding: 20px;\">"
@@ -198,6 +196,7 @@ public class BrevoEmailService {
     }
 
     public void sendEmail(String email, String fullName, String body, String subject) {
+        System.out.println("Sending email " + email);
         Map<String, Object> requestBody = Map.of(
                 "sender", Map.of("name", "Apointy", "email", "motpanliviuwork@gmail.com"),
                 "to", List.of(Map.of("email", email, "name", fullName)),

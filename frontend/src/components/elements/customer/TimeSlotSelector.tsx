@@ -1,4 +1,4 @@
-import type { Appointment, Holiday } from "@/lib/Types";
+import type { Appointment, Holiday, Service } from "@/lib/Types";
 import { convertEnumToMins } from "@/lib/utils";
 import {
   addMinutes,
@@ -18,6 +18,7 @@ export function TimeSlotSelector({
   appointments,
   date,
   holidays,
+  service,
 }: {
   selectedTime: string;
   onSelect: (time: string) => void;
@@ -25,25 +26,19 @@ export function TimeSlotSelector({
   appointments: Appointment[];
   date: string;
   holidays: Holiday[];
+  service: Service;
 }) {
   const BREAK_TIME = 10;
   const minutes = convertEnumToMins(duration);
-  let startTime = new Date();
-  const endTime = new Date();
-  const lunchStart = new Date();
-  const lunchEnd = new Date();
-  startTime.setHours(9, 0, 0, 0);
-  endTime.setHours(17, 0, 0, 0);
-  lunchStart.setHours(12, 0, 0, 0);
-  lunchEnd.setHours(13, 0, 0, 0);
+  let startTime = parse(service.startTime, "HH:mm:ss", new Date());
+  const endTime = parse(service.endTime, "HH:mm:ss", new Date());
 
   let slots: string[] = [format(startTime, "HH:mm")];
 
   while (1) {
     startTime = addMinutes(startTime, minutes + BREAK_TIME);
     if (startTime > endTime) break;
-    if (!(startTime > lunchStart && startTime < lunchEnd))
-      slots.push(format(startTime, "HH:mm"));
+    slots.push(format(startTime, "HH:mm"));
   }
 
   const isValidTimeSlot = (timeString: string) => {
