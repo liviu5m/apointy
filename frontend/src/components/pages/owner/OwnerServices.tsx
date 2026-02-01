@@ -1,9 +1,5 @@
 import { getBusiness } from "@/api/business";
-import {
-  deleteService,
-  getAllServices,
-  getAllServicesByUserId,
-} from "@/api/service";
+import { deleteService, getAllServicesByUserId } from "@/api/service";
 import { getAllServiceCategories } from "@/api/serviceCategory";
 import BusinessDataForm from "@/components/elements/common/BusinessDataForm";
 import Loader from "@/components/elements/common/Loader";
@@ -12,11 +8,10 @@ import BusinessHolidayModal from "@/components/elements/owner/BusinessHolidayMod
 import CreateNewServiceForm from "@/components/elements/owner/CreateNewServiceForm";
 import UpdateServiceForm from "@/components/elements/owner/UpdateServiceForm";
 import BodyLayout from "@/components/layouts/BodyLayout";
-import { useAppContext } from "@/lib/AppProvider";
 import type { Service } from "@/lib/Types";
 import { convertEnumServiceDuration } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format, parse, parseISO } from "date-fns";
+import { format, parse } from "date-fns";
 import {
   BriefcaseBusiness,
   Clock,
@@ -25,7 +20,6 @@ import {
   Plus,
   Settings,
   Trash2,
-  User,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -33,7 +27,6 @@ import Swal from "sweetalert2";
 
 const OwnerServices = () => {
   const queryClient = useQueryClient();
-  const { user } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isBusinessModalOpen, setIsBusinessModalOpen] = useState(false);
   const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(-1);
@@ -290,10 +283,7 @@ const OwnerServices = () => {
             onClose={() => setIsHolidayModalOpen(-1)}
             title="Business Holidays"
           >
-            <BusinessHolidayModal
-              serviceId={isHolidayModalOpen}
-              setIsHolidayModalOpen={setIsHolidayModalOpen}
-            />
+            <BusinessHolidayModal serviceId={isHolidayModalOpen} />
           </Modal>
         )}
       </div>

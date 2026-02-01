@@ -3,9 +3,8 @@ import { AppointmentCard } from "@/components/elements/common/AppointmentCard";
 import Loader from "@/components/elements/common/Loader";
 import BodyLayout from "@/components/layouts/BodyLayout";
 import type { Appointment } from "@/lib/Types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import React from "react";
 import { Link } from "react-router-dom";
 
 const CustomerAppointments = () => {

@@ -4,15 +4,10 @@ import DashboardAppointmentCard from "@/components/elements/customer/DashboardAp
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { useAppContext } from "@/lib/AppProvider";
 import type { Appointment } from "@/lib/Types";
-import { convertEnumToMins } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
-  addMinutes,
-  format,
   isAfter,
-  isBefore,
   isToday,
-  parse,
   parseISO,
   startOfDay,
 } from "date-fns";

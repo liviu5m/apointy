@@ -4,7 +4,6 @@ import { convertEnumToMins } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { addMinutes, format, isToday, parse, parseISO } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
-import React from "react";
 
 const DashboardAppointmentCard = ({ apt }: { apt: Appointment }) => {
   const dateReference = parse(apt.time, "HH:mm:ss", new Date());

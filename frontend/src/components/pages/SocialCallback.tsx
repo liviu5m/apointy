@@ -2,7 +2,7 @@ import { googleSyncAccount } from "@/api/user";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Store, User } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Loader from "../elements/common/Loader";
 import { useAppContext } from "@/lib/AppProvider";

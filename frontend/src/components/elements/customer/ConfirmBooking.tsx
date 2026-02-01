@@ -2,7 +2,7 @@ import { createAppointmentFunc } from "@/api/appointment";
 import type { AppointmentData } from "@/lib/Types";
 import { convertEnumServiceDuration } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import type { Axios, AxiosError } from "axios";
+import type { AxiosError } from "axios";
 import { format, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";

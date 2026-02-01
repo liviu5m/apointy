@@ -1,5 +1,4 @@
 import { sendResetUserPasswordEmail } from "@/api/user";
-import type { PasswordState } from "@/lib/Types";
 import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useState } from "react";

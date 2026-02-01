@@ -11,13 +11,7 @@ import UpdateBusinessHolidayForm from "./UpdateBusinessHolidayForm";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-const BusinessHolidayModal = ({
-  serviceId,
-  setIsHolidayModalOpen,
-}: {
-  serviceId: number;
-  setIsHolidayModalOpen: (e: number) => void;
-}) => {
+const BusinessHolidayModal = ({ serviceId }: { serviceId: number }) => {
   const [createHolidayModal, setCreateHolidayModal] = useState(false);
   const [updateHoliday, setUpdateHoliday] = useState<Holiday | null>(null);
   const queryClient = useQueryClient();

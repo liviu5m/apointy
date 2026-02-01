@@ -8,7 +8,7 @@ spring:
     password: ${RABBIT_MQ_PASSWORD}
     virtual-host: ${RABBIT_MQ_USERNAME}
     ssl:
-      enabled: false
+      enabled: true
 
 brevo:
   api-key: ${BREVO_API_KEY}
@@ -20,5 +20,5 @@ server:
 application:
   services:
     user:
-      url: http://localhost:8081
+      url: http://user-service:8081
 

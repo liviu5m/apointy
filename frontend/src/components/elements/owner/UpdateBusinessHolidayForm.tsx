@@ -1,4 +1,4 @@
-import { createBusinessHoliday, updateBusinessHoliday } from "@/api/holiday";
+import { updateBusinessHoliday } from "@/api/holiday";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -10,14 +10,14 @@ import {
 } from "@radix-ui/react-popover";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
   Calendar as CalendarIcon,
   CalendarSync,
   ChevronDownIcon,
   UtensilsCrossed,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 const UpdateBusinessHolidayForm = ({
@@ -29,6 +29,8 @@ const UpdateBusinessHolidayForm = ({
   onClose: () => void;
   holiday: Holiday;
 }) => {
+  console.log(holiday);
+
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const [data, setData] = useState<BusinessHolidayData>({
@@ -36,7 +38,7 @@ const UpdateBusinessHolidayForm = ({
     reason: holiday.reason,
     startTime: holiday.startTime,
     endTime: holiday.endTime,
-    date: holiday.date,
+    date: parseISO(holiday.date),
     daysRecurring: holiday.daysRecurring
       .split("")
       .map((el: string) => (el == "1" ? true : false)),

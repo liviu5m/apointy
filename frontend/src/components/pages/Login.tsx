@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useFetcher, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import DateSelector from "./DateSelector";
 import type { AppointmentData } from "@/lib/Types";
 import { TimeSlotSelector } from "./TimeSlotSelector";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { checkAvailabilityAppointment } from "@/api/appointment";
 import Loader from "../common/Loader";
 import { getBusinessHolidays } from "@/api/holiday";

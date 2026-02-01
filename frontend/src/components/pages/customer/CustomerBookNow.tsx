@@ -1,6 +1,6 @@
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { ArrowLeft } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AppointmentServices from "../../elements/customer/AppointmentServices";
 import type { AppointmentData } from "@/lib/Types";

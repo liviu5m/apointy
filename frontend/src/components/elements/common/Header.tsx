@@ -1,5 +1,5 @@
 import { Calendar, LogOut, User } from "lucide-react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../lib/AppProvider";
 import { useMutation } from "@tanstack/react-query";
 import { logoutUser } from "@/api/user";

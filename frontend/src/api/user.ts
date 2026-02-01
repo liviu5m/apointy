@@ -1,11 +1,9 @@
 import type {
   LoginData,
   PasswordResetData,
-  PasswordState,
   SignupData,
 } from "@/lib/Types";
 import axios from "axios";
-import { Axis3D } from "lucide-react";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 

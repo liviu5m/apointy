@@ -17,7 +17,7 @@ import {
   ChevronDownIcon,
   UtensilsCrossed,
 } from "lucide-react";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 const CreateBusinessHolidayForm = ({

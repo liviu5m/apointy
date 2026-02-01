@@ -1,7 +1,7 @@
 import { getAppointmentByOwnerId } from "@/api/appointment";
 import BodyLayout from "@/components/layouts/BodyLayout";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Select,
   SelectContent,

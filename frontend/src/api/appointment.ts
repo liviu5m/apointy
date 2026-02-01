@@ -1,7 +1,6 @@
 import type { Appointment, AppointmentData } from "@/lib/Types";
 import axios from "axios";
 import { format } from "date-fns";
-import { Beaker } from "lucide-react";
 
 const baseUrl = import.meta.env.VITE_API_URL;
 

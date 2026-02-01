@@ -1,13 +1,16 @@
-
 services:
   eureka-server:
+    build: ./eureka-server
     image: liviu5/eureka-server:latest
     container_name: eureka-server
     ports:
       - "8761:8761"
+    networks:
+      - apointy-network
     restart: always
 
   user-service:
+    build: ./user-service
     image: liviu5/user-service:latest
     container_name: user-service
     ports:
@@ -15,12 +18,45 @@ services:
     env_file:
       - ./user-service/.env
     environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - apointy-network
+    restart: on-failure
+
+  booking-service:
+    build: ./booking-service
+    image: liviu5/booking-service:latest
+    container_name: booking-service
+    ports:
+      - "8082:8082"
+    env_file:
+      - ./booking-service/.env
+    environment:
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
+    networks:
+      - apointy-network
+    restart: on-failure
+
+  notification-service:
+    build: ./notification-service
+    image: liviu5/notification-service:latest
+    container_name: notification-service
+    env_file:
+      - ./notification-service/.env
+    environment:
+      - EUREKA_SERVER=http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - apointy-network
     restart: on-failure
 
   gateway:
+    build: ./gateway
     image: liviu5/gateway:latest
     container_name: gateway
     ports:
@@ -31,4 +67,10 @@ services:
       - EUREKA_SERVER=http://eureka-server:8761/eureka/
     depends_on:
       - eureka-server
+    networks:
+      - apointy-network
     restart: on-failure
+
+networks:
+  apointy-network:
+    driver: bridge

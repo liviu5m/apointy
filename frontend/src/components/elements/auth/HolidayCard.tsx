@@ -1,5 +1,4 @@
-import React from "react";
-import { Clock, Calendar, Repeat, Trash2, Tag, Edit } from "lucide-react";
+import { Clock, Calendar, Trash2, Tag, Edit } from "lucide-react";
 import type { Holiday } from "@/lib/Types";
 
 interface Props {
@@ -13,8 +12,8 @@ const HolidayItem = ({ holiday, onDelete, setUpdateHoliday }: Props) => {
     holiday.startTime === "00:00:00" && holiday.endTime === "23:59:59";
 
   const displayDate =
-    holiday.date instanceof Date
-      ? holiday.date.toLocaleDateString()
+    typeof holiday.date === "object" && holiday.date !== null
+      ? (holiday.date as Date).toLocaleDateString()
       : holiday.date;
 
   const weekDays = ["M", "T", "W", "T", "F", "S", "S"];

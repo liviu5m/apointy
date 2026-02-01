@@ -12,7 +12,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import React, { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 

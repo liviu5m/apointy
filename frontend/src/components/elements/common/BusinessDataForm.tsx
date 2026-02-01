@@ -2,7 +2,6 @@ import { updateBusinessFunc } from "@/api/business";
 import type { Business } from "@/lib/Types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type ChangeEvent } from "react";
-import Loader from "./Loader";
 import { toast } from "react-toastify";
 import { User } from "lucide-react";
 import { uploadImage } from "@/api/cloudinary";

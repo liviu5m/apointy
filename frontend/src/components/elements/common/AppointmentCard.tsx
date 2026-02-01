@@ -1,4 +1,3 @@
-import React from "react";
 import { Calendar, Clock, User, Check, X, AlertCircle } from "lucide-react";
 import { addMinutes, format, parse, parseISO } from "date-fns";
 import type { Appointment } from "@/lib/Types";

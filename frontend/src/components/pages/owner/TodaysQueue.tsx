@@ -1,5 +1,4 @@
 import { getAppointmentByOwnerId } from "@/api/appointment";
-import { Badge } from "@/components/elements/common/Badge";
 import Loader from "@/components/elements/common/Loader";
 import QueueAppointmentCard from "@/components/elements/owner/QueueAppointmentCard";
 import BodyLayout from "@/components/layouts/BodyLayout";

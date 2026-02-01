@@ -1,5 +1,5 @@
 import { Calendar } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PasswordResetEmail from "../elements/auth/PasswordResetEmail";
 import PasswordResetCode from "../elements/auth/PasswordResetCode";
@@ -8,7 +8,6 @@ import PasswordResetForm from "../elements/auth/PasswordResetForm";
 const PasswordReset = () => {
   const [state, setState] = useState("email");
   const [email, setEmail] = useState("");
-  const [userId, setUserId] = useState(-1);
   const location = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
